@@ -1,0 +1,13 @@
+../Core/Src/main.c:98:5:main	8	static
+../Core/Src/main.c:153:6:SystemClock_Config	112	static
+../Core/Src/main.c:195:6:HAL_TIM_IC_CaptureCallback	16	static
+../Core/Src/main.c:249:6:IMD_ShortCircuitTo24VError_Handler	8	static
+../Core/Src/main.c:254:6:IMD_InsulationMeasurementError_Handler	8	static
+../Core/Src/main.c:259:6:IMD_UnderVoltageError_Handler	8	static
+../Core/Src/main.c:264:6:IMD_SpeedStartError_Handler	8	static
+../Core/Src/main.c:269:6:IMD_DeviceError_Handler	8	static
+../Core/Src/main.c:274:6:IMD_ConFaultEarthError_Handler	8	static
+../Core/Src/main.c:279:6:IMD_MalfunctionError_Handler	8	static
+../Core/Src/main.c:284:6:IMD_BMS_Check	16	static
+../Core/Src/main.c:298:6:K1_K2_Check	16	static
+../Core/Src/main.c:338:6:Error_Handler	8	static,ignoring_inline_asm
