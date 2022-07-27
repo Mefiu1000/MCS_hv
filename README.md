@@ -14,12 +14,12 @@ RxID: **0x001F**
 |------|-------|-------|-------|
 |      |DLC    |READ   |RegID  |
 
-2) Change AIR1(+) and AIR2(-) status:
+2) Tractive system activation:
 
-|RxID                             |4      |       |0x02   |AIR+ status |AIR- status |
-|---------------------------------|-------|-------|-------|------------|------------|
-|                                 |DLC    |WRITE  |RegID  |data[7-0]   |data[7-0]   |
-|AIR1 and AIR2 value:(1-0N, 0-OFF)|       |       |       |            |            |
+|RxID                             |3      |       |0x02   |Action      |
+|---------------------------------|-------|-------|-------|------------|
+|                                 |DLC    |WRITE  |RegID  |data[7-0]   |
+|AIR1 and AIR2 value:(1-0N, 0-OFF)|       |       |       |            |
 
 3) Insulation resistance value:
 
@@ -35,12 +35,12 @@ RxID: **0x001F**
 |MAIN status value:(1-0N, 0-OFF)|       |       |       |           |
 
 # Respond
-1) AIR1(+) and AIR2(-) current value:
+1) AIR1(+) and AIR2(-) average current value:
 
-|TxID  |3      |0x01   |0xNN        |0xNN        |Range |Units    |
-|------|-------|-------|------------|------------|------|---------|
-|      |DLC    |RegID  |data[7-0]   |data[7-0]   |8bit  |+/-255   |
-|      |       |       |AIR1_current|AIR2_current|      |         |
+|TxID  |2      |0x01   |0xNN        |Range |Units    |
+|------|-------|-------|------------|------|---------|
+|      |DLC    |RegID  |data[7-0]   |8bit  |+/-255   |
+|      |       |       |AIR1_current|      |         |
 
 2) Insulation resistance value:
 
@@ -118,5 +118,11 @@ RxID: **0x001F**
 12) BMS Shutdown circuit error:
 
 |TxID  |2      |0x1D   |0x0C   |
+|------|-------|-------|-------|
+|      |DLC    |ERROR  |Code   |
+
+13) AIRs current divergence error:
+
+|TxID  |2      |0x1D   |0x0D   |
 |------|-------|-------|-------|
 |      |DLC    |ERROR  |Code   |
