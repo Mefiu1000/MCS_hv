@@ -146,26 +146,8 @@ RxID: **0x001F**
 |------|-------|-------|-------|
 |      |DLC    |ERROR  |Code   |
 
-11) IMD Shutdown circuit error:
+11) BMS Shutdown circuit error:
 
 |TxID  |2      |0x1D   |0x0B   |
-|------|-------|-------|-------|
-|      |DLC    |ERROR  |Code   |
-
-12) BMS Shutdown circuit error:
-
-|TxID  |2      |0x1D   |0x0C   |
-|------|-------|-------|-------|
-|      |DLC    |ERROR  |Code   |
-
-13) TSMS connection error:
-
-|TxID  |2      |0x1D   |0x0D   |
-|------|-------|-------|-------|
-|      |DLC    |ERROR  |Code   |
-
-14) MSD/HVD connection error:
-
-|TxID  |2      |0x1D   |0x0E   |
 |------|-------|-------|-------|
 |      |DLC    |ERROR  |Code   |
