@@ -17,9 +17,9 @@
 /* -------------------------------START OF DEFINES----------------------------------------- */
 /* ---------------------------------------------------------------------------------------- */
 
-#define NUMBER_OF_READ_REGS  (3U)
-#define NUMBER_OF_WRITE_REGS (3U)
-#define NUMBER_OF_ERROR_REGS (3U)
+#define NUMBER_OF_READ_REGS  (5U)
+#define NUMBER_OF_WRITE_REGS (2U)
+#define NUMBER_OF_ERROR_REGS (12U)
 #define ERROR_DLC            (2U)
 #define ACKNOWLEDMENT_DLC    (2U)
 #define FIRST_ARRAY_ELEMENT  (0U)
