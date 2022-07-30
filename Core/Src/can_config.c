@@ -113,15 +113,10 @@ WriteMessageFrame WriteMessage[NUMBER_OF_WRITE_REGS] =
 // Enum of ErrorRegs defined in can_config.h. Nothing needs to be configured here.
 
 
-void CAN_Register_Callback(void (*callback)(void))
-{
-	CAN_Error_Callback = callback;
-}
-
 /** CAN_Init
  * @brief Function to ensure proper work of CAN interface
-          - configuration of filter and calling essantial functions of CAN initialization
-          Filter configured in accordance with E&S Team Project Guidlines.
+          - configuration of filter and calling essential functions of CAN initialization
+          Filter configured in accordance with E&S Team Project Guidelines.
  *
  * @retval None.
  **/
@@ -137,6 +132,8 @@ void CAN_Init(void)
 	sFilterConfig.FilterFIFOAssignment = CAN_RX_FIFO0;
 	sFilterConfig.FilterActivation = ENABLE;
 	sFilterConfig.SlaveStartFilterBank = 14;
+
+//	CAN_Register_Callback(CAN_Error_Handler);
 
 	if (HAL_CAN_ConfigFilter(&hcan, &sFilterConfig) != HAL_OK)
 	{
@@ -207,10 +204,7 @@ void CAN_Receive(CAN_HandleTypeDef *CANPointer, CAN_RxHeaderTypeDef *RxHeader, u
 {
 	if(HAL_CAN_GetRxMessage(CANPointer, CAN_RX_FIFO0, RxHeader, RxData) != HAL_OK)
 	{
-		if(CAN_Error_Callback != 0)
-		{
-			CAN_Error_Callback();
-		}
+		CANBUS_Error_Handler();
 	}
 };
 
@@ -229,10 +223,7 @@ void CAN_Transmit(CAN_TxHeaderTypeDef *TxHeader, uint8_t TxDLC, uint8_t *TxData,
 	TxHeader->DLC = TxDLC;
 	if(HAL_CAN_AddTxMessage(&hcan, TxHeader, TxData, TxMailbox) != HAL_OK)
 	{
-		if(CAN_Error_Callback != 0)
-		{
-			CAN_Error_Callback();
-		}
+		CANBUS_Error_Handler();
 	}
 }
 
@@ -243,7 +234,7 @@ void CAN_Transmit(CAN_TxHeaderTypeDef *TxHeader, uint8_t TxDLC, uint8_t *TxData,
  **/
 void CAN_Respond(void)
 {
-	for (int i = Read_MeaningfulRegName1_ID; i < NUMBER_OF_READ_REGS; i++)
+	for (int i = FIRST_ARRAY_ELEMENT; i < NUMBER_OF_READ_REGS; i++)
 	{
 		if (ResponseMessage[i].Response_RegID == RxData[ReadRegID])
 		{
@@ -259,13 +250,28 @@ void CAN_Respond(void)
  **/
 void CAN_ProcessWriteCommand(void)
 {
-	for (int i = Write_MeaningfulRegName1_ID; i < NUMBER_OF_WRITE_REGS; i++)
+	for (int i = FIRST_ARRAY_ELEMENT; i < NUMBER_OF_WRITE_REGS; i++)
 	{
 		if (WriteMessage[i].Write_RegID == RxData[WriteMessage_reg])
 		{
+			CAN_AcknowledgeWriteMessage(WriteMessage[i].Write_RegID);
 			WriteMessage[i].Write_ReactionHandler();
 		}
 	}
+}
+
+/** CAN_AcknowledgeWriteMessage
+ * @brief Function to send acknowledment received write instruction via CAN
+ *
+ * @param WriteReqID ID of received write instruction
+ *
+ * @retval None.
+ **/
+void CAN_AcknowledgeWriteMessage(WriteRegsID WriteReqID)
+{
+	TxData[AcknowledgmentMessage_reg] = Write_AcknowledgmentMessage; // 1st Data Byte: Standard Write Acknowledgment instruction
+	TxData[WriteRegID] = WriteReqID;                                 // 2nd Data Byte: Acknowledged Received Write Command ReqID
+	CAN_Transmit(&TxHeader, ACKNOWLEDMENT_DLC, TxData, &TxMailbox);  // Transmit Data
 }
 
 /** CAN_ReportError
@@ -281,7 +287,7 @@ void CAN_ReportError(ErrorRegsID ErrorID) //tego uzywam np. w IMD_Check
 {
 	TxData[ErrorMessage_reg] = Error_ReportMessage;             // 1st Data Byte: Standard Error Report instruction 
 	TxData[ErrorRegID] = ErrorID;                            // 2nd Data Byte: Reported Error ID
-	CAN_Transmit( &TxHeader, ERROR_DLC, TxData, &TxMailbox); // Transmit Data
+	CAN_Transmit(&TxHeader, ERROR_DLC, TxData, &TxMailbox); // Transmit Data
 }
 
 
@@ -290,7 +296,7 @@ void CAN_ReportError(ErrorRegsID ErrorID) //tego uzywam np. w IMD_Check
  * 
  * @retval None.
  * */
-void CAN_Error_Handler(void)
+void CANBUS_Error_Handler(void)
 {
 	__disable_irq();
 	/*

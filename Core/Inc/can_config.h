@@ -17,10 +17,12 @@
 /* -------------------------------START OF DEFINES----------------------------------------- */
 /* ---------------------------------------------------------------------------------------- */
 
-#define NUMBER_OF_READ_REGS  (5U)
-#define NUMBER_OF_WRITE_REGS (2U)
-#define NUMBER_OF_ERROR_REGS (12U)
+#define NUMBER_OF_READ_REGS  (3U)
+#define NUMBER_OF_WRITE_REGS (3U)
+#define NUMBER_OF_ERROR_REGS (3U)
 #define ERROR_DLC            (2U)
+#define ACKNOWLEDMENT_DLC    (2U)
+#define FIRST_ARRAY_ELEMENT  (0U)
 
 /* ---------------------------------------------------------------------------------------- */
 /* -------------------------------END OF DEFINES------------------------------------------- */
@@ -94,8 +96,15 @@ typedef enum
 
 typedef enum
 {
+	AcknowledgmentMessage_reg,
+	WriteRegID
+} AcknowledgmentFrame;
+
+typedef enum
+{
 	Error_ReportMessage = 0x1Du,
-	Read_RequestMessage = 0x3Du
+	Read_RequestMessage = 0x3Du,
+	Write_AcknowledgmentMessage = 0x5Du
 } CANStadardMessage;
 
 typedef enum
@@ -115,7 +124,6 @@ typedef enum
 
 typedef void (*ReadReactionHandlerFuncPtr)(void);
 typedef void (*WriteReactionHandlerFuncPtr)(void);
-void (* CAN_Error_Callback)(void);
 
 typedef struct
 {
@@ -148,7 +156,9 @@ void CAN_Receive(CAN_HandleTypeDef *CANPointer, CAN_RxHeaderTypeDef *RxHeader, u
 void CAN_Transmit(CAN_TxHeaderTypeDef *TxHeader, uint8_t TxDLC, uint8_t *TxData, uint32_t *TxMailbox);
 void CAN_Respond(void);
 void CAN_ProcessWriteCommand(void);
+void CAN_AcknowledgeWriteMessage(WriteRegsID WriteReqID);
 void CAN_ReportError(ErrorRegsID ErrorID);
+void CANBUS_Error_Handler(void);
 void ReadReactionHandler1(void);
 void WriteReactionHandler1(void);
 
