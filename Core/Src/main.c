@@ -49,8 +49,10 @@
 #define READ 0x3D
 #define ERROR_D 0x001D
 
-#define MAX_CURRENT_DIVERGENCE 0.5 // random value, change later
-#define MAX_CURRENT 5 // random value, change later
+#define MAX_CURRENT_DIVERGENCE 0.5 	// random value, change later
+#define MAX_CURRENT 5 				// random value, change later
+
+#define MAIN_TIMEOUT 5000   		// random value, change later
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -72,12 +74,18 @@ uint8_t Read_Ins_resistance[2];
 
 uint16_t AIR1_Current, AIR2_Current;
 uint8_t Read_AIR_AVG[2];
+
+_Bool Write_MAIN_Status = 0; //init value 0 or 1????
+
+_Bool Write_AIR1_ON, Write_AIR2_ON, Write_PreCharge_ON;
+_Bool AIR1_STATUS, AIR2_STATUS;
+
+uint32_t Timer_MAIN;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-//void IMD_State_Check(void);
 void BMS_Check(void);
 void AIR1_AIR2_Check(void);
 void IMD_ShortCircuitTo24VError_Handler(void);
@@ -87,8 +95,10 @@ void IMD_SpeedStartError_Handler(void);
 void IMD_DeviceError_Handler(void);
 void IMD_ConFaultEarthError_Handler(void);
 void IMD_MalfunctionError_Handler(void);
-
+void AIR1_AIR2_Current_Measurment(void);
+void MAIN_Status_Check(void);
 void Set_ADC_Channel(uint32_t Channel);
+
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -135,12 +145,17 @@ int main(void)
 	HAL_TIM_IC_Start(&htim1, TIM_CHANNEL_2); //indirect channel
 	/*PWM input capture */
 
+	Timer_MAIN = HAL_GetTick();
 	/* USER CODE END 2 */
 
 	/* Infinite loop */
 	/* USER CODE BEGIN WHILE */
 	while (1)
 	{
+		if (( HAL_GetTick() - Timer_MAIN ) > MAIN_TIMEOUT)
+		{
+			MAIN_Status_Check();
+		}
 		AIR1_AIR2_Check();
 		BMS_Check();
 		/* USER CODE END WHILE */
@@ -163,8 +178,7 @@ void SystemClock_Config(void)
 	/** Initializes the RCC Oscillators according to the specified parameters
 	 * in the RCC_OscInitTypeDef structure.
 	 */
-	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI
-			| RCC_OSCILLATORTYPE_HSI14;
+	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_HSI14;
 	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
 	RCC_OscInitStruct.HSI14State = RCC_HSI14_ON;
 	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
@@ -177,8 +191,7 @@ void SystemClock_Config(void)
 
 	/** Initializes the CPU, AHB and APB buses clocks
 	 */
-	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK
-			| RCC_CLOCKTYPE_PCLK1;
+	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1;
 	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
 	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
 	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
@@ -197,6 +210,15 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
+/** HAL_TIM_IC_CaptureCallback
+ * @brief Callback in which frame insulation resistance value is measured by IMD.
+ * Basing on signal frequency and duty cycle, condition is checked
+ * and reported via CAN if necessary.
+ *
+ * @param htim pointer to structure that contains htim configuration.
+ *
+ * @retval None.
+ **/
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) //tim1, measuring IMD signal
 {
 	uint16_t Temp;
@@ -208,90 +230,118 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) //tim1, measuring IMD s
 		if (IC_Value != 0)
 		{
 			//calc duty cycle
-			Duty_Cycle = (HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_2) * 100)
-					/ IC_Value; //duty cycle in %
+			Duty_Cycle = ( HAL_TIM_ReadCapturedValue(htim, TIM_CHANNEL_2) * 100 ) / IC_Value; //duty cycle in %
 			Frequency = 8000000 / IC_Value; //frequency of input signal, 8MHz - tim1 clock freq
-			//ResponseMessage[Ins_R_Value].Response_Data1 = (uint8_t)((90 * 1200) / (Duty_Cycle - 5) - 1200); //in kOm LSB
-			//ResponseMessage[Ins_R_Value].Response_Data1 = ((uint8_t)((90 * 1200) / (Duty_Cycle - 5) - 1200) >> 8); //in kOm MSB
-			Temp = (uint16_t) ((90 * 1200) / (Duty_Cycle - 5) - 1200); //in kOm
+			Temp = (uint16_t)( ( 90 * 1200 ) / ( Duty_Cycle - 5 ) - 1200 ); //in kOm
 			Read_Ins_resistance[0] = Temp; //LSB
-			Read_Ins_resistance[1] = (Temp >> 8); //MSB
-
+			Read_Ins_resistance[1] = ( Temp >> 8 ); //MSB
 		}
 		switch (Frequency)
 		{
 		case 0:
-			if (HAL_GPIO_ReadPin(IMD_M_LS_uC_GPIO_Port, IMD_M_LS_uC_Pin)
-					== GPIO_PIN_SET) IMD_ShortCircuitTo24VError_Handler();
+			if (HAL_GPIO_ReadPin(IMD_M_LS_uC_GPIO_Port, IMD_M_LS_uC_Pin) == GPIO_PIN_SET) IMD_ShortCircuitTo24VError_Handler();
 			break;
 		case 10:
-			if (((int8_t) Duty_Cycle >= 5) && ((int8_t) Duty_Cycle <= 95)) ; //all OK
+			if (( (int8_t)Duty_Cycle >= 5 ) && ( (int8_t)Duty_Cycle <= 95 )) ; //all OK
 			else IMD_InsulationMeasurementError_Handler();
 			break;
 		case 20:
-			if (((int8_t) Duty_Cycle >= 5) && ((int8_t) Duty_Cycle <= 95)) IMD_UnderVoltageError_Handler();
+			if (( (int8_t)Duty_Cycle >= 5 ) && ( (int8_t)Duty_Cycle <= 95 )) IMD_UnderVoltageError_Handler();
 			else IMD_MalfunctionError_Handler();
 			break;
 		case 30:
-			if (((int8_t) Duty_Cycle >= 5) && ((int8_t) Duty_Cycle <= 10)) ; //all OK
-			else if (((int8_t) Duty_Cycle >= 90) && ((int8_t) Duty_Cycle <= 95)) IMD_SpeedStartError_Handler();
+			if (( (int8_t)Duty_Cycle >= 5 ) && ( (int8_t)Duty_Cycle <= 10 )) ; //all OK
+			else if (( (int8_t)Duty_Cycle >= 90 ) && ( (int8_t)Duty_Cycle <= 95 )) IMD_SpeedStartError_Handler();
 			else IMD_MalfunctionError_Handler();
 			break;
 		case 40:
-			if (((int8_t) Duty_Cycle >= 47.5) && ((int8_t) Duty_Cycle <= 52.5)) IMD_DeviceError_Handler();
+			if (( (int8_t)Duty_Cycle >= 47.5 ) && ( (int8_t)Duty_Cycle <= 52.5 )) IMD_DeviceError_Handler();
 			else IMD_MalfunctionError_Handler();
 			break;
 		case 50:
-			if (((int8_t) Duty_Cycle >= 47.5) && ((int8_t) Duty_Cycle <= 52.5)) IMD_ConFaultEarthError_Handler();
+			if (( (int8_t)Duty_Cycle >= 47.5 ) && ( (int8_t)Duty_Cycle <= 52.5 )) IMD_ConFaultEarthError_Handler();
 			else IMD_MalfunctionError_Handler();
 			break;
 		}
-
-//		if( (Frequency == 0) && (HAL_GPIO_ReadPin(IMD_M_LS_uC_GPIO_Port, IMD_M_LS_uC_Pin) == GPIO_PIN_SET) )
-//			IMD_ShortCircuitTo24VError_Handler();
-//		else if( ())
-//		else if(Frequency == 20)
-//			IMD_UnderVoltageError_Handler();
-//		else if(Frequency == 50)
-//			IMD_ConFaultEarthError_Handler();
 	}
 }
 
+/** IMD_ShortCircuitTo24VError_Handler
+ * @brief Function to report  short circuit error via CAN
+ *
+ * @retval None.
+ **/
 void IMD_ShortCircuitTo24VError_Handler(void)
 {
 	CAN_ReportError(IMD_Short_Circuit_24V_ERROR);
 }
 
+/** IMD_InsulationMeasurementError_Handler
+ * @brief Function to report too low/too high frame insulation error via CAN
+ *
+ * @retval None.
+ **/
 void IMD_InsulationMeasurementError_Handler(void)
 {
 	CAN_ReportError(IMD_Insulation_Measurement_ERROR);
 }
 
+/** IMD_UnderVoltageError_Handler
+ * @brief Function to report error via CAN when Tractive System voltage drops below 300V
+ *
+ * @retval None.
+ **/
 void IMD_UnderVoltageError_Handler(void)
 {
 	CAN_ReportError(IMD_Under_Voltage_ERROR);
 }
 
+/** IMD_SpeedStartError_Handler
+ * @brief Function to report Speed start measurement failure error via CAN
+ *
+ * @retval None.
+ **/
 void IMD_SpeedStartError_Handler(void)
 {
 	CAN_ReportError(IMD_Speed_Start_ERROR);
 }
 
+/** IMD_DeviceError_Handler
+ * @brief Function to report Device error via CAN
+ *
+ * @retval None.
+ **/
 void IMD_DeviceError_Handler(void)
 {
 	CAN_ReportError(IMD_Device_ERROR);
 }
 
+/** IMD_ConFaultEarthError_Handler
+ * @brief Function to report fault on the earth connection error via CAN
+ *
+ * @retval None.
+ **/
 void IMD_ConFaultEarthError_Handler(void)
 {
 	CAN_ReportError(IMD_Con_Fault_Earth_ERROR);
 }
 
-void IMD_MalfunctionError_Handler(void) //Wrong Duty Cycle
+/** IMD_MalfunctionError_Handler
+ * @brief Function to report IMD malfunction
+ * based on incorrect Duty Cycle for respective frequency
+ *
+ * @retval None.
+ **/
+void IMD_MalfunctionError_Handler(void)
 {
 	CAN_ReportError(IMD_Malfunction_ERROR);
 }
 
+/** BMS_Check
+ * @brief Function to report BMS shutdown circuit error via CAN
+ *
+ * @retval None.
+ **/
 void BMS_Check(void)
 {
 	_Bool BMS_Status = HAL_GPIO_ReadPin(BMS_STATUS_uC_GPIO_Port,
@@ -302,7 +352,13 @@ void BMS_Check(void)
 	}
 }
 
-void AIR1_AIR2_Check(void)
+/** AIR1_AIR2_Current_Measurment
+ * @brief Function which measures AIRs actual amperage
+ * and calculate their average value
+ *
+ * @retval None.
+ **/
+void AIR1_AIR2_Current_Measurment(void)
 {
 	/* AIRs current measurement and check BEGIN */
 	Set_ADC_Channel(ADC_CHANNEL_6); //Switch to channel 6
@@ -322,11 +378,21 @@ void AIR1_AIR2_Check(void)
 	}
 
 	//Current calc V(I) = 0.0034 *I + 2.5 -> I = (V(I) - 2.5) / 0.0034, equation from datasheet
-	AIR1_Current = (uint16_t)( ( (float)(AIR1_Current- 2.5) ) / 0.0034);
-	AIR2_Current = (uint16_t)( ( (float)(AIR2_Current- 2.5) ) / 0.0034);
-	//Prop calc of AVG will be moved to another function/handler
-	Read_AIR_AVG[0] = ((AIR1_Current + AIR2_Current) / 2); //LSB
-	Read_AIR_AVG[1] = (((AIR1_Current + AIR2_Current) / 2) >> 8); //MSB
+	AIR1_Current = (uint16_t)( ( (float)( AIR1_Current - 2.5 ) ) / 0.0034 );
+	AIR2_Current = (uint16_t)( ( (float)( AIR2_Current - 2.5 ) ) / 0.0034 );
+	Read_AIR_AVG[0] = ( ( AIR1_Current + AIR2_Current ) / 2 ); 		  //LSB
+	Read_AIR_AVG[1] = ( ( ( AIR1_Current + AIR2_Current ) / 2 ) >> 8 ); //MSB
+}
+
+/** AIR1_AIR2_Check
+ * @brief Function which monitor AIRs amperage
+ * and reports error via CAN if they don't conduct current
+ *
+ * @retval None.
+ **/
+void AIR1_AIR2_Check(void)
+{
+	AIR1_AIR2_Current_Measurment();
 
 	if (AIR1_Current > MAX_CURRENT)
 	{
@@ -340,28 +406,54 @@ void AIR1_AIR2_Check(void)
 	{
 		CAN_ReportError(AIRs_Current_Divergence_ERROR);
 	}
-	/* AIRs current measurement and check END */
 
-	_Bool AIR1_ON = HAL_GPIO_ReadPin(AIR1_ON_uC_GPIO_Port, AIR1_ON_uC_Pin); //AIR1 turned on/off
-	_Bool AIR1_STATUS = HAL_GPIO_ReadPin(AIR1_STATUS_uC_GPIO_Port,
+	Write_AIR1_ON = HAL_GPIO_ReadPin(AIR1_ON_uC_GPIO_Port, AIR1_ON_uC_Pin); //AIR1 turned on/off
+	AIR1_STATUS = HAL_GPIO_ReadPin(AIR1_STATUS_uC_GPIO_Port,
 	AIR1_STATUS_uC_Pin); // AIR1 conducting current
 
-	_Bool AIR2_ON = HAL_GPIO_ReadPin(AIR2_ON_uC_GPIO_Port, AIR2_ON_uC_Pin); //AIR2 turned on/off
-	_Bool AIR2_STATUS = HAL_GPIO_ReadPin(AIR2_STATUS_uC_GPIO_Port,
+	Write_AIR2_ON = HAL_GPIO_ReadPin(AIR2_ON_uC_GPIO_Port, AIR2_ON_uC_Pin); //AIR2 turned on/off
+	AIR2_STATUS = HAL_GPIO_ReadPin(AIR2_STATUS_uC_GPIO_Port,
 	AIR2_STATUS_uC_Pin); // AIR2 conducting current
 
 	//AIR1 state check, if AIR1 is turned on but doesn't conduct current, send error
-	if ((AIR1_ON == GPIO_PIN_SET) && (AIR1_STATUS == GPIO_PIN_RESET))
+	if (( Write_AIR1_ON == GPIO_PIN_SET ) && ( AIR1_STATUS == GPIO_PIN_RESET ))
 	{
 		CAN_ReportError(AIR1_ERROR);
 	}
 	//AIR2 state check, if AIR2 is turned on but doesn't conduct current, send error
-	if ((AIR2_ON == GPIO_PIN_SET) && (AIR2_STATUS == GPIO_PIN_RESET))
+	if (( Write_AIR2_ON == GPIO_PIN_SET ) && ( AIR2_STATUS == GPIO_PIN_RESET ))
 	{
 		CAN_ReportError(AIR2_ERROR);
 	}
 }
 
+/** MAIN_Status_Check
+ * @brief Function which checks MAIN status
+ * and turns OFF Tractive System if MAIN is not ON
+ *
+ * @retval None.
+ **/
+void MAIN_Status_Check(void)
+{
+	if (Write_MAIN_Status == 0) //MAIN always should be ON
+	{
+		HAL_GPIO_WritePin(AIR1_ON_uC_GPIO_Port, AIR1_ON_uC_Pin, Write_MAIN_Status);
+		HAL_GPIO_WritePin(Precharge_ON_GPIO_Port, Precharge_ON_Pin, Write_MAIN_Status);
+		HAL_GPIO_WritePin(AIR2_ON_uC_GPIO_Port, AIR2_ON_uC_Pin, Write_MAIN_Status);
+	}
+	else //reset main status
+	{
+		Write_MAIN_Status = 0;
+	}
+}
+
+/** Set_ADC_Channel
+ * @brief Function which switches used ADC channel
+ *
+ * @param Channel Number of channel which we want to use
+ *
+ * @retval None.
+ **/
 void Set_ADC_Channel(uint32_t Channel)
 {
 	ADC_ChannelConfTypeDef sConfig = { 0 };

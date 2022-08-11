@@ -42,7 +42,7 @@ typedef enum
 
 typedef enum
 {
-	AIRs_State = 0x02u, //AIRs state
+	Tractive_System_State = 0x02u, //AIRs and Pre-charge state
 	MAIN_State = 0x04u
 } WriteRegsID;
 
@@ -127,6 +127,7 @@ typedef struct
 	WriteReactionHandlerFuncPtr Write_ReactionHandler;
 	bool*        Write_State1;
 	bool*        Write_State2;
+	bool*        Write_State3;
 	uint8_t*     Write_Data1;
 } WriteMessageFrame;
 
@@ -156,8 +157,10 @@ void CAN_ProcessWriteCommand(void);
 void CAN_AcknowledgeWriteMessage(WriteRegsID WriteReqID);
 void CAN_ReportError(ErrorRegsID ErrorID);
 void CANBUS_Error_Handler(void);
-void ReadReactionHandler1(void);
-void WriteReactionHandler1(void);
+void ReadAIRsAmperageHandler(void);
+void ReadInsulationResistanceValueHandler(void);
+void WriteTractiveSystemStateHandler(void);
+void WriteMainStatusHandler(void);
 
 /* ---------------------------------------------------------------------------------------- */
 /* ---------------------------END OF FUNCTIONS DECLARATIONS-------------------------------- */

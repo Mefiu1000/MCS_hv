@@ -53,7 +53,7 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-
+void AIR1_AIR2_Current_Measurment(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
@@ -65,8 +65,6 @@ void Error_Handler(void);
 #define AIR1_CURRENT_SENSOR_GPIO_Port GPIOA
 #define AIR2_CURRENT_SENSOR_Pin GPIO_PIN_7
 #define AIR2_CURRENT_SENSOR_GPIO_Port GPIOA
-#define Temp_Sens_1_Pin GPIO_PIN_1
-#define Temp_Sens_1_GPIO_Port GPIOB
 #define AIR2_ON_uC_Pin GPIO_PIN_12
 #define AIR2_ON_uC_GPIO_Port GPIOB
 #define AIR1_ON_uC_Pin GPIO_PIN_13
@@ -79,8 +77,6 @@ void Error_Handler(void);
 #define IMD_M_LS_uC_GPIO_Port GPIOA
 #define Precharge_ON_Pin GPIO_PIN_3
 #define Precharge_ON_GPIO_Port GPIOB
-#define BSPD_INFO_uC_Pin GPIO_PIN_6
-#define BSPD_INFO_uC_GPIO_Port GPIOB
 #define IMD_STATUS_uC_Pin GPIO_PIN_7
 #define IMD_STATUS_uC_GPIO_Port GPIOB
 #define BMS_STATUS_uC_Pin GPIO_PIN_11
