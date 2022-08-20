@@ -16,10 +16,10 @@ RxID: **0x001F**
 
 2) Tractive system activation:
 
-|RxID                             |3      |       |0x02   |Action      |
-|---------------------------------|-------|-------|-------|------------|
-|                                 |DLC    |WRITE  |RegID  |data[7-0]   |
-|AIR1 and AIR2 value:(1-0N, 0-OFF)|       |       |       |            |
+|RxID                             |3      |       |0x02   |0xNN       |Range |Units|
+|---------------------------------|-------|-------|-------|-----------|------|-----|
+|                                 |DLC    |WRITE  |RegID  |data[0-7]  |8bit  |0-1  |
+|AIR1 and AIR2 value:(1-0N, 0-OFF)|       |       |       |           |      |     |
 
 3) Insulation resistance value:
 
@@ -29,18 +29,17 @@ RxID: **0x001F**
 
 4) MAIN status monitor:
 
-|RxID                           |3      |       |0x04   |MAIN status|
-|-------------------------------|-------|-------|-------|-----------|
-|                               |DLC    |WRITE  |RegID  |data[7-0]  |
-|MAIN status value:(1-0N, 0-OFF)|       |       |       |           |
+|RxID                           |3      |       |0x04   |0xNN       |Range |Units|
+|-------------------------------|-------|-------|-------|-----------|------|-----|
+|                               |DLC    |WRITE  |RegID  |data[0-7]  |8bit  |0-1  |
+|MAIN status value:(1-0N, 0-OFF)|       |       |       |           |      |     |
 
 # Respond
 1) AIR1(+) and AIR2(-) average current value:
 
-|TxID  |2      |0x01   |0xNN        |Range |Units    |
-|------|-------|-------|------------|------|---------|
-|      |DLC    |RegID  |data[7-0]   |8bit  |+/-255   |
-|      |       |       |AIR1_current|      |         |
+|TxID  |3      |0x02   |0xNN      |0xNN       |Range |Units    |
+|------|-------|-------|----------|-----------|------|---------|
+|      |DLC    |RegID  |data[0-7] |data[8-15] |16bit |0-65536  |
 
 2) Insulation resistance value:
 

@@ -36,31 +36,31 @@
 // All of Reg1 - RegN should be replaced by meaningful name of reg (don't delete prefixs)
 typedef enum
 {
-	AIRs_Value = 0x01u, // ADC AIR1 AIR2  current values channel 6, 7 read
-	Ins_R_Value = 0x03u //Insulation resistance value
+	Read_AIRs_Value_ID = 0x01u, // ADC AIR1 AIR2  current values channel 6, 7 read
+	Read_Ins_R_Value_ID = 0x03u //Insulation resistance value
 } ReadRegsID;
 
 typedef enum
 {
-	Tractive_System_State = 0x02u, //AIRs and Pre-charge state
-	MAIN_State = 0x04u
+	Write_Tractive_System_State_ID = 0x02u, //AIRs and Pre-charge state
+	Write_MAIN_State_ID = 0x04u
 } WriteRegsID;
 
 typedef enum
 {
-	AIR1_Overcurrent_ERROR = 0x001u,
-	AIR2_Overcurrent_ERROR = 0x002u,
-	AIR1_ERROR = 0x003u,
-	AIR2_ERROR = 0x004u,
-	IMD_Short_Circuit_24V_ERROR = 0x005u,
-	IMD_Insulation_Measurement_ERROR = 0x006u,
-	IMD_Under_Voltage_ERROR = 0x007u,
-	IMD_Speed_Start_ERROR = 0x008u,
-	IMD_Device_ERROR = 0x009u,
-	IMD_Con_Fault_Earth_ERROR = 0x00Au,
-	IMD_Malfunction_ERROR = 0x00Bu,
-	BMS_SDC_ERROR = 0x00Cu,
-	AIRs_Current_Divergence_ERROR = 0x00Du
+	Error_AIR1_Overcurrent_ID = 0x001u,
+	Error_AIR2_Overcurrent_ID = 0x002u,
+	Error_AIR1_ID = 0x003u,
+	Error_AIR2_ID = 0x004u,
+	Error_IMD_Short_Circuit_24V_ID = 0x005u,
+	Error_IMD_Insulation_Measurement_ID = 0x006u,
+	Error_IMD_Under_Voltage_ID = 0x007u,
+	Error_IMD_Speed_Start_ID = 0x008u,
+	Error_IMD_Device_ID = 0x009u,
+	Error_IMD_Con_Fault_Earth_ID = 0x00Au,
+	Error_IMD_Malfunction_ID = 0x00Bu,
+	Error_BMS_SDC_ID = 0x00Cu,
+	Error_AIRs_Current_Divergence_ID = 0x00Du
 } ErrorRegsID;
 
 /* Enums to avoid magic numbers */

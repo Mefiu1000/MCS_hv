@@ -24,23 +24,15 @@ uint8_t				 RxData[8];
 uint32_t			 TxMailbox;
 
 /* Externs used in configs */
-extern bool Write_State1;
-extern bool Write_State2;
-extern bool Write_State3;
-extern uint8_t Write_Data1;
 
 extern _Bool Write_AIR1_ON;
 extern _Bool Write_AIR2_ON;
 extern _Bool Write_PreCharge_ON;
 extern _Bool Write_MAIN_Status;
 
-extern uint8_t Read_Data1;
-extern uint8_t Read_Data2;
-extern uint8_t Read_Data3;
-extern uint8_t Read_Data4;
-
 extern uint8_t Read_Ins_resistance[2];
 extern uint8_t Read_AIR_AVG[2];
+
 /** 
  * CAN READ MESSAGE FRAME
  *
@@ -63,14 +55,14 @@ ResponseMessageFrame ResponseMessage[NUMBER_OF_READ_REGS] =
 		{ //AIR1 and AIR2 current value:
 			.Response_DLC         = 3u,                         // Data length of response message
 			.Read_ReactionHandler = ReadAIRsAmperageHandler,       // Handler of reaction to read request from MCU
-			.Response_RegID       = AIRs_Value, // Address of regs which response refers
+			.Response_RegID       = Read_AIRs_Value_ID, // Address of regs which response refers
 			.Response_Data1       = &Read_AIR_AVG[0],                 // AIR1 current value AVG LSB
 			.Response_Data2       = &Read_AIR_AVG[1]                 // AIR2 current value AVG MSB
 		},
 		{//Insulation resistance value:
 			.Response_DLC         = 3u,
 			.Read_ReactionHandler = ReadInsulationResistanceValueHandler,
-			.Response_RegID       = Ins_R_Value,
+			.Response_RegID       = Read_Ins_R_Value_ID,
 			.Response_Data1       = &Read_Ins_resistance[0],                // Insulation resistance LSB
 			.Response_Data2       = &Read_Ins_resistance[1]                // Insulation resistance MSB
 		}
@@ -86,14 +78,14 @@ ResponseMessageFrame ResponseMessage[NUMBER_OF_READ_REGS] =
 WriteMessageFrame WriteMessage[NUMBER_OF_WRITE_REGS] =
 {
 		{
-			.Write_RegID           = Tractive_System_State, 	   // Reg which should be written by MCU command
+			.Write_RegID           = Write_Tractive_System_State_ID, 	   // Reg which should be written by MCU command
 			.Write_ReactionHandler = WriteTractiveSystemStateHandler,        // Handler of reaction to write request from MCU
 			.Write_State1          = &Write_AIR1_ON,               // If this MCU command should change state of sth this pointer should point to variable which regards this state eg. if MCU want to light up brake light, this structure element should point to variable which contain the state of brake lights
 			.Write_State2          = &Write_AIR2_ON,               // If this MCU command should change state of sth this pointer should point to variable which regards this state eg. if MCU want to light up brake light, this structure element should point to variable which contain the state of brake lights
 			.Write_State3 		   = &Write_PreCharge_ON
 		},
 		{
-			.Write_RegID           = MAIN_State, 					// Reg which should be written by MCU command
+			.Write_RegID           = Write_MAIN_State_ID, 					// Reg which should be written by MCU command
 			.Write_ReactionHandler = WriteMainStatusHandler,       // Handler of reaction to write request from MCU
 			.Write_State1          = &Write_MAIN_Status            // If this MCU command should change state of sth this pointer should point to variable which regards this state eg. if MCU want to light up brake light, this structure element should point to variable which contain the state of brake lights
 		}

@@ -273,7 +273,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) //tim1, measuring IMD s
  **/
 void IMD_ShortCircuitTo24VError_Handler(void)
 {
-	CAN_ReportError(IMD_Short_Circuit_24V_ERROR);
+	CAN_ReportError(Error_IMD_Short_Circuit_24V_ID);
 }
 
 /** IMD_InsulationMeasurementError_Handler
@@ -283,7 +283,7 @@ void IMD_ShortCircuitTo24VError_Handler(void)
  **/
 void IMD_InsulationMeasurementError_Handler(void)
 {
-	CAN_ReportError(IMD_Insulation_Measurement_ERROR);
+	CAN_ReportError(Error_IMD_Insulation_Measurement_ID);
 }
 
 /** IMD_UnderVoltageError_Handler
@@ -293,7 +293,7 @@ void IMD_InsulationMeasurementError_Handler(void)
  **/
 void IMD_UnderVoltageError_Handler(void)
 {
-	CAN_ReportError(IMD_Under_Voltage_ERROR);
+	CAN_ReportError(Error_IMD_Under_Voltage_ID);
 }
 
 /** IMD_SpeedStartError_Handler
@@ -303,7 +303,7 @@ void IMD_UnderVoltageError_Handler(void)
  **/
 void IMD_SpeedStartError_Handler(void)
 {
-	CAN_ReportError(IMD_Speed_Start_ERROR);
+	CAN_ReportError(Error_IMD_Speed_Start_ID);
 }
 
 /** IMD_DeviceError_Handler
@@ -313,7 +313,7 @@ void IMD_SpeedStartError_Handler(void)
  **/
 void IMD_DeviceError_Handler(void)
 {
-	CAN_ReportError(IMD_Device_ERROR);
+	CAN_ReportError(Error_IMD_Device_ID);
 }
 
 /** IMD_ConFaultEarthError_Handler
@@ -323,7 +323,7 @@ void IMD_DeviceError_Handler(void)
  **/
 void IMD_ConFaultEarthError_Handler(void)
 {
-	CAN_ReportError(IMD_Con_Fault_Earth_ERROR);
+	CAN_ReportError(Error_IMD_Con_Fault_Earth_ID);
 }
 
 /** IMD_MalfunctionError_Handler
@@ -334,7 +334,7 @@ void IMD_ConFaultEarthError_Handler(void)
  **/
 void IMD_MalfunctionError_Handler(void)
 {
-	CAN_ReportError(IMD_Malfunction_ERROR);
+	CAN_ReportError(Error_IMD_Malfunction_ID);
 }
 
 /** BMS_Check
@@ -348,7 +348,7 @@ void BMS_Check(void)
 	BMS_STATUS_uC_Pin);
 	if (BMS_Status == 0)
 	{
-		CAN_ReportError(BMS_SDC_ERROR);
+		CAN_ReportError(Error_BMS_SDC_ID);
 	}
 }
 
@@ -396,15 +396,15 @@ void AIR1_AIR2_Check(void)
 
 	if (AIR1_Current > MAX_CURRENT)
 	{
-		CAN_ReportError(AIR1_Overcurrent_ERROR);
+		CAN_ReportError(Error_AIR1_Overcurrent_ID);
 	}
 	if (AIR2_Current > MAX_CURRENT)
 	{
-		CAN_ReportError(AIR2_Overcurrent_ERROR);
+		CAN_ReportError(Error_AIR2_Overcurrent_ID);
 	}
 	if (abs(AIR1_Current - AIR2_Current) > MAX_CURRENT_DIVERGENCE)
 	{
-		CAN_ReportError(AIRs_Current_Divergence_ERROR);
+		CAN_ReportError(Error_AIRs_Current_Divergence_ID);
 	}
 
 	Write_AIR1_ON = HAL_GPIO_ReadPin(AIR1_ON_uC_GPIO_Port, AIR1_ON_uC_Pin); //AIR1 turned on/off
@@ -418,12 +418,12 @@ void AIR1_AIR2_Check(void)
 	//AIR1 state check, if AIR1 is turned on but doesn't conduct current, send error
 	if (( Write_AIR1_ON == GPIO_PIN_SET ) && ( AIR1_STATUS == GPIO_PIN_RESET ))
 	{
-		CAN_ReportError(AIR1_ERROR);
+		CAN_ReportError(Error_AIR1_ID);
 	}
 	//AIR2 state check, if AIR2 is turned on but doesn't conduct current, send error
 	if (( Write_AIR2_ON == GPIO_PIN_SET ) && ( AIR2_STATUS == GPIO_PIN_RESET ))
 	{
-		CAN_ReportError(AIR2_ERROR);
+		CAN_ReportError(Error_AIR2_ID);
 	}
 }
 
