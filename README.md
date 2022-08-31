@@ -114,14 +114,8 @@ RxID: **0x001F**
 |------|-------|-------|-------|
 |      |DLC    |ERROR  |Code   |
 
-12) BMS Shutdown circuit error:
+12) AIRs current divergence error:
 
 |TxID  |2      |0x1D   |0x0C   |
-|------|-------|-------|-------|
-|      |DLC    |ERROR  |Code   |
-
-13) AIRs current divergence error:
-
-|TxID  |2      |0x1D   |0x0D   |
 |------|-------|-------|-------|
 |      |DLC    |ERROR  |Code   |

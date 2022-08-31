@@ -65,8 +65,6 @@ void AIR1_AIR2_Current_Measurment(void);
 #define AIR1_CURRENT_SENSOR_GPIO_Port GPIOA
 #define AIR2_CURRENT_SENSOR_Pin GPIO_PIN_7
 #define AIR2_CURRENT_SENSOR_GPIO_Port GPIOA
-#define AIR2_ON_uC_Pin GPIO_PIN_12
-#define AIR2_ON_uC_GPIO_Port GPIOB
 #define AIR1_ON_uC_Pin GPIO_PIN_13
 #define AIR1_ON_uC_GPIO_Port GPIOB
 #define AIR2_STATUS_uC_Pin GPIO_PIN_14
@@ -75,12 +73,6 @@ void AIR1_AIR2_Current_Measurment(void);
 #define AIR1_STATUS_uC_GPIO_Port GPIOB
 #define IMD_M_LS_uC_Pin GPIO_PIN_8
 #define IMD_M_LS_uC_GPIO_Port GPIOA
-#define Precharge_ON_Pin GPIO_PIN_3
-#define Precharge_ON_GPIO_Port GPIOB
-#define IMD_STATUS_uC_Pin GPIO_PIN_7
-#define IMD_STATUS_uC_GPIO_Port GPIOB
-#define BMS_STATUS_uC_Pin GPIO_PIN_11
-#define BMS_STATUS_uC_GPIO_Port GPIOF
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

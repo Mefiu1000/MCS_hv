@@ -19,7 +19,7 @@
 
 #define NUMBER_OF_READ_REGS  (2U)
 #define NUMBER_OF_WRITE_REGS (2U)
-#define NUMBER_OF_ERROR_REGS (13U)
+#define NUMBER_OF_ERROR_REGS (12U)
 #define ERROR_DLC            (2U)
 #define ACKNOWLEDMENT_DLC    (2U)
 #define FIRST_ARRAY_ELEMENT  (0U)
@@ -59,8 +59,7 @@ typedef enum
 	Error_IMD_Device_ID = 0x009u,
 	Error_IMD_Con_Fault_Earth_ID = 0x00Au,
 	Error_IMD_Malfunction_ID = 0x00Bu,
-	Error_BMS_SDC_ID = 0x00Cu,
-	Error_AIRs_Current_Divergence_ID = 0x00Du
+	Error_AIRs_Current_Divergence_ID = 0x00Cu
 } ErrorRegsID;
 
 /* Enums to avoid magic numbers */

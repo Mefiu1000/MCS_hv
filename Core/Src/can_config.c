@@ -26,8 +26,6 @@ uint32_t			 TxMailbox;
 /* Externs used in configs */
 
 extern _Bool Write_AIR1_ON;
-extern _Bool Write_AIR2_ON;
-extern _Bool Write_PreCharge_ON;
 extern _Bool Write_MAIN_Status;
 
 extern uint8_t Read_Ins_resistance[2];
@@ -80,9 +78,7 @@ WriteMessageFrame WriteMessage[NUMBER_OF_WRITE_REGS] =
 		{
 			.Write_RegID           = Write_Tractive_System_State_ID, 	   // Reg which should be written by MCU command
 			.Write_ReactionHandler = WriteTractiveSystemStateHandler,        // Handler of reaction to write request from MCU
-			.Write_State1          = &Write_AIR1_ON,               // If this MCU command should change state of sth this pointer should point to variable which regards this state eg. if MCU want to light up brake light, this structure element should point to variable which contain the state of brake lights
-			.Write_State2          = &Write_AIR2_ON,               // If this MCU command should change state of sth this pointer should point to variable which regards this state eg. if MCU want to light up brake light, this structure element should point to variable which contain the state of brake lights
-			.Write_State3 		   = &Write_PreCharge_ON
+			.Write_State1          = &Write_AIR1_ON               // If this MCU command should change state of sth this pointer should point to variable which regards this state eg. if MCU want to light up brake light, this structure element should point to variable which contain the state of brake lights
 		},
 		{
 			.Write_RegID           = Write_MAIN_State_ID, 					// Reg which should be written by MCU command
@@ -328,11 +324,7 @@ void ReadInsulationResistanceValueHandler(void)
 void WriteTractiveSystemStateHandler(void)
 {
 	*( WriteMessage[0].Write_State1 ) = RxData[WriteData1];
-	*( WriteMessage[0].Write_State2 ) = RxData[WriteData1];
-	*( WriteMessage[0].Write_State3 ) = RxData[WriteData1];
 	HAL_GPIO_WritePin(AIR1_ON_uC_GPIO_Port, AIR1_ON_uC_Pin, *( WriteMessage[0].Write_State1 ));
-	HAL_GPIO_WritePin(Precharge_ON_GPIO_Port, Precharge_ON_Pin, *( WriteMessage[0].Write_State3 ));
-	HAL_GPIO_WritePin(AIR2_ON_uC_GPIO_Port, AIR2_ON_uC_Pin, *( WriteMessage[0].Write_State2 ));
 }
 
 /** WriteMainStatusHandler

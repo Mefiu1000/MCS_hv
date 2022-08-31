@@ -77,7 +77,7 @@ uint8_t Read_AIR_AVG[2];
 
 _Bool Write_MAIN_Status = 0; //init value 0 or 1????
 
-_Bool Write_AIR1_ON, Write_AIR2_ON, Write_PreCharge_ON;
+_Bool Write_AIR1_ON;
 _Bool AIR1_STATUS, AIR2_STATUS;
 
 uint32_t Timer_MAIN;
@@ -86,7 +86,6 @@ uint32_t Timer_MAIN;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-void BMS_Check(void);
 void AIR1_AIR2_Check(void);
 void IMD_ShortCircuitTo24VError_Handler(void);
 void IMD_InsulationMeasurementError_Handler(void);
@@ -107,38 +106,38 @@ void Set_ADC_Channel(uint32_t Channel);
 /* USER CODE END 0 */
 
 /**
- * @brief  The application entry point.
- * @retval int
- */
+  * @brief  The application entry point.
+  * @retval int
+  */
 int main(void)
 {
-	/* USER CODE BEGIN 1 */
+  /* USER CODE BEGIN 1 */
 
-	/* USER CODE END 1 */
+  /* USER CODE END 1 */
 
-	/* MCU Configuration--------------------------------------------------------*/
+  /* MCU Configuration--------------------------------------------------------*/
 
-	/* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-	HAL_Init();
+  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
+  HAL_Init();
 
-	/* USER CODE BEGIN Init */
+  /* USER CODE BEGIN Init */
 
-	/* USER CODE END Init */
+  /* USER CODE END Init */
 
-	/* Configure the system clock */
-	SystemClock_Config();
+  /* Configure the system clock */
+  SystemClock_Config();
 
-	/* USER CODE BEGIN SysInit */
+  /* USER CODE BEGIN SysInit */
 
-	/* USER CODE END SysInit */
+  /* USER CODE END SysInit */
 
-	/* Initialize all configured peripherals */
-	MX_GPIO_Init();
-	MX_CAN_Init();
-	MX_ADC_Init();
-	MX_TIM1_Init();
-	MX_USART1_UART_Init();
-	/* USER CODE BEGIN 2 */
+  /* Initialize all configured peripherals */
+  MX_GPIO_Init();
+  MX_CAN_Init();
+  MX_ADC_Init();
+  MX_TIM1_Init();
+  MX_USART1_UART_Init();
+  /* USER CODE BEGIN 2 */
 
 	/*PWM input capture */
 	HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1); //main channel
@@ -146,10 +145,10 @@ int main(void)
 	/*PWM input capture */
 
 	Timer_MAIN = HAL_GetTick();
-	/* USER CODE END 2 */
+  /* USER CODE END 2 */
 
-	/* Infinite loop */
-	/* USER CODE BEGIN WHILE */
+  /* Infinite loop */
+  /* USER CODE BEGIN WHILE */
 	while (1)
 	{
 		if (( HAL_GetTick() - Timer_MAIN ) > MAIN_TIMEOUT)
@@ -157,55 +156,55 @@ int main(void)
 			MAIN_Status_Check();
 		}
 		AIR1_AIR2_Check();
-		BMS_Check();
-		/* USER CODE END WHILE */
+    /* USER CODE END WHILE */
 
-		/* USER CODE BEGIN 3 */
+    /* USER CODE BEGIN 3 */
 	}
-	/* USER CODE END 3 */
+  /* USER CODE END 3 */
 }
 
 /**
- * @brief System Clock Configuration
- * @retval None
- */
+  * @brief System Clock Configuration
+  * @retval None
+  */
 void SystemClock_Config(void)
 {
-	RCC_OscInitTypeDef RCC_OscInitStruct = { 0 };
-	RCC_ClkInitTypeDef RCC_ClkInitStruct = { 0 };
-	RCC_PeriphCLKInitTypeDef PeriphClkInit = { 0 };
+  RCC_OscInitTypeDef RCC_OscInitStruct = {0};
+  RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
 
-	/** Initializes the RCC Oscillators according to the specified parameters
-	 * in the RCC_OscInitTypeDef structure.
-	 */
-	RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI | RCC_OSCILLATORTYPE_HSI14;
-	RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-	RCC_OscInitStruct.HSI14State = RCC_HSI14_ON;
-	RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
-	RCC_OscInitStruct.HSI14CalibrationValue = 16;
-	RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
-	if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
-	{
-		Error_Handler();
-	}
+  /** Initializes the RCC Oscillators according to the specified parameters
+  * in the RCC_OscInitTypeDef structure.
+  */
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSI14;
+  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.HSI14State = RCC_HSI14_ON;
+  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+  RCC_OscInitStruct.HSI14CalibrationValue = 16;
+  RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
+  if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
 
-	/** Initializes the CPU, AHB and APB buses clocks
-	 */
-	RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK | RCC_CLOCKTYPE_SYSCLK | RCC_CLOCKTYPE_PCLK1;
-	RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
-	RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
-	RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
+  /** Initializes the CPU, AHB and APB buses clocks
+  */
+  RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
+                              |RCC_CLOCKTYPE_PCLK1;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+  RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
+  RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
-	if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
-	{
-		Error_Handler();
-	}
-	PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1;
-	PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK1;
-	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
-	{
-		Error_Handler();
-	}
+  if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_0) != HAL_OK)
+  {
+    Error_Handler();
+  }
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USART1;
+  PeriphClkInit.Usart1ClockSelection = RCC_USART1CLKSOURCE_PCLK1;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
+  {
+    Error_Handler();
+  }
 }
 
 /* USER CODE BEGIN 4 */
@@ -337,21 +336,6 @@ void IMD_MalfunctionError_Handler(void)
 	CAN_ReportError(Error_IMD_Malfunction_ID);
 }
 
-/** BMS_Check
- * @brief Function to report BMS shutdown circuit error via CAN
- *
- * @retval None.
- **/
-void BMS_Check(void)
-{
-	_Bool BMS_Status = HAL_GPIO_ReadPin(BMS_STATUS_uC_GPIO_Port,
-	BMS_STATUS_uC_Pin);
-	if (BMS_Status == 0)
-	{
-		CAN_ReportError(Error_BMS_SDC_ID);
-	}
-}
-
 /** AIR1_AIR2_Current_Measurment
  * @brief Function which measures AIRs actual amperage
  * and calculate their average value
@@ -411,7 +395,6 @@ void AIR1_AIR2_Check(void)
 	AIR1_STATUS = HAL_GPIO_ReadPin(AIR1_STATUS_uC_GPIO_Port,
 	AIR1_STATUS_uC_Pin); // AIR1 conducting current
 
-	Write_AIR2_ON = HAL_GPIO_ReadPin(AIR2_ON_uC_GPIO_Port, AIR2_ON_uC_Pin); //AIR2 turned on/off
 	AIR2_STATUS = HAL_GPIO_ReadPin(AIR2_STATUS_uC_GPIO_Port,
 	AIR2_STATUS_uC_Pin); // AIR2 conducting current
 
@@ -420,8 +403,8 @@ void AIR1_AIR2_Check(void)
 	{
 		CAN_ReportError(Error_AIR1_ID);
 	}
-	//AIR2 state check, if AIR2 is turned on but doesn't conduct current, send error
-	if (( Write_AIR2_ON == GPIO_PIN_SET ) && ( AIR2_STATUS == GPIO_PIN_RESET ))
+	//Both airs should conduct current at the same time
+	if(( AIR1_STATUS == GPIO_PIN_SET ) && ( AIR2_STATUS == GPIO_PIN_RESET ))
 	{
 		CAN_ReportError(Error_AIR2_ID);
 	}
@@ -438,8 +421,6 @@ void MAIN_Status_Check(void)
 	if (Write_MAIN_Status == 0) //MAIN always should be ON
 	{
 		HAL_GPIO_WritePin(AIR1_ON_uC_GPIO_Port, AIR1_ON_uC_Pin, Write_MAIN_Status);
-		HAL_GPIO_WritePin(Precharge_ON_GPIO_Port, Precharge_ON_Pin, Write_MAIN_Status);
-		HAL_GPIO_WritePin(AIR2_ON_uC_GPIO_Port, AIR2_ON_uC_Pin, Write_MAIN_Status);
 	}
 	else //reset main status
 	{
@@ -468,18 +449,18 @@ void Set_ADC_Channel(uint32_t Channel)
 /* USER CODE END 4 */
 
 /**
- * @brief  This function is executed in case of error occurrence.
- * @retval None
- */
+  * @brief  This function is executed in case of error occurrence.
+  * @retval None
+  */
 void Error_Handler(void)
 {
-	/* USER CODE BEGIN Error_Handler_Debug */
+  /* USER CODE BEGIN Error_Handler_Debug */
 	/* User can add his own implementation to report the HAL error return state */
 	__disable_irq();
 	while (1)
 	{
 	}
-	/* USER CODE END Error_Handler_Debug */
+  /* USER CODE END Error_Handler_Debug */
 }
 
 #ifdef  USE_FULL_ASSERT
