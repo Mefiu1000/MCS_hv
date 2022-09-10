@@ -63,7 +63,7 @@ void MX_ADC_Init(void)
 
   /** Configure for the selected ADC regular channel to be converted.
   */
-  sConfig.Channel = ADC_CHANNEL_6;
+  sConfig.Channel = ADC_CHANNEL_8;
   sConfig.Rank = ADC_RANK_CHANNEL_NUMBER;
   sConfig.SamplingTime = ADC_SAMPLETIME_7CYCLES_5;
   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
@@ -73,7 +73,7 @@ void MX_ADC_Init(void)
 
   /** Configure for the selected ADC regular channel to be converted.
   */
-  sConfig.Channel = ADC_CHANNEL_7;
+  sConfig.Channel = ADC_CHANNEL_9;
   if (HAL_ADC_ConfigChannel(&hadc, &sConfig) != HAL_OK)
   {
     Error_Handler();
@@ -96,15 +96,15 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
     /* ADC1 clock enable */
     __HAL_RCC_ADC1_CLK_ENABLE();
 
-    __HAL_RCC_GPIOA_CLK_ENABLE();
+    __HAL_RCC_GPIOB_CLK_ENABLE();
     /**ADC GPIO Configuration
-    PA6     ------> ADC_IN6
-    PA7     ------> ADC_IN7
+    PB0     ------> ADC_IN8
+    PB1     ------> ADC_IN9
     */
-    GPIO_InitStruct.Pin = AIR1_CURRENT_SENSOR_Pin|AIR2_CURRENT_SENSOR_Pin;
+    GPIO_InitStruct.Pin = AIR_P_CURRENT_SENSOR_Pin|AIR_N_CURRENT_SENSOR_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
   /* USER CODE BEGIN ADC1_MspInit 1 */
 
@@ -124,10 +124,10 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
     __HAL_RCC_ADC1_CLK_DISABLE();
 
     /**ADC GPIO Configuration
-    PA6     ------> ADC_IN6
-    PA7     ------> ADC_IN7
+    PB0     ------> ADC_IN8
+    PB1     ------> ADC_IN9
     */
-    HAL_GPIO_DeInit(GPIOA, AIR1_CURRENT_SENSOR_Pin|AIR2_CURRENT_SENSOR_Pin);
+    HAL_GPIO_DeInit(GPIOB, AIR_P_CURRENT_SENSOR_Pin|AIR_N_CURRENT_SENSOR_Pin);
 
   /* USER CODE BEGIN ADC1_MspDeInit 1 */
 
