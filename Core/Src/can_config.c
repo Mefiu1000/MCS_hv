@@ -25,7 +25,7 @@ uint32_t			 TxMailbox;
 
 /* Externs used in configs */
 
-extern _Bool Write_AIR1_ON;
+extern _Bool Write_AIR_N_Control;
 extern _Bool Write_MAIN_Status;
 
 extern uint8_t Read_Ins_resistance[2];
@@ -50,12 +50,12 @@ extern uint8_t Read_AIR_AVG[2];
  **/
 ResponseMessageFrame ResponseMessage[NUMBER_OF_READ_REGS] =
 {
-		{ //AIR1 and AIR2 current value:
+		{ //AIRs current value:
 			.Response_DLC         = 3u,                         // Data length of response message
 			.Read_ReactionHandler = ReadAIRsAmperageHandler,       // Handler of reaction to read request from MCU
 			.Response_RegID       = Read_AIRs_Value_ID, // Address of regs which response refers
-			.Response_Data1       = &Read_AIR_AVG[0],                 // AIR1 current value AVG LSB
-			.Response_Data2       = &Read_AIR_AVG[1]                 // AIR2 current value AVG MSB
+			.Response_Data1       = &Read_AIR_AVG[0],                 // AIR_P current value AVG LSB
+			.Response_Data2       = &Read_AIR_AVG[1]                 // AIR_N current value AVG MSB
 		},
 		{//Insulation resistance value:
 			.Response_DLC         = 3u,
@@ -78,7 +78,7 @@ WriteMessageFrame WriteMessage[NUMBER_OF_WRITE_REGS] =
 		{
 			.Write_RegID           = Write_Tractive_System_State_ID, 	   // Reg which should be written by MCU command
 			.Write_ReactionHandler = WriteTractiveSystemStateHandler,        // Handler of reaction to write request from MCU
-			.Write_State1          = &Write_AIR1_ON               // If this MCU command should change state of sth this pointer should point to variable which regards this state eg. if MCU want to light up brake light, this structure element should point to variable which contain the state of brake lights
+			.Write_State1          = &Write_AIR_N_Control               // If this MCU command should change state of sth this pointer should point to variable which regards this state eg. if MCU want to light up brake light, this structure element should point to variable which contain the state of brake lights
 		},
 		{
 			.Write_RegID           = Write_MAIN_State_ID, 					// Reg which should be written by MCU command
@@ -295,11 +295,11 @@ void CANBUS_Error_Handler(void)
  **/
 void ReadAIRsAmperageHandler(void)
 {
-	AIR1_AIR2_Current_Measurment();
+	AIRs_Current_Measurment();
 
 	TxData[ResponseRegID] = ResponseMessage[0].Response_RegID;             		  		// Response ID
-	TxData[ResponseData1] = *( ResponseMessage[0].Response_Data1 );                		// AIR1 current value AVG LSB
-	TxData[ResponseData2] = *( ResponseMessage[0].Response_Data2 ); 					// AIR1 current value AVG MSB
+	TxData[ResponseData1] = *( ResponseMessage[0].Response_Data1 );                		// AIR_P current value AVG LSB
+	TxData[ResponseData2] = *( ResponseMessage[0].Response_Data2 ); 					// AIR_N current value AVG MSB
 	CAN_Transmit(&TxHeader, ResponseMessage[0].Response_DLC, TxData, &TxMailbox); 		// Transmit Data
 }
 
@@ -324,7 +324,7 @@ void ReadInsulationResistanceValueHandler(void)
 void WriteTractiveSystemStateHandler(void)
 {
 	*( WriteMessage[0].Write_State1 ) = RxData[WriteData1];
-	HAL_GPIO_WritePin(AIR1_ON_uC_GPIO_Port, AIR1_ON_uC_Pin, *( WriteMessage[0].Write_State1 ));
+	HAL_GPIO_WritePin(AIR_N_CONTROL_uC_GPIO_Port, AIR_N_CONTROL_uC_Pin, *( WriteMessage[0].Write_State1 ));
 }
 
 /** WriteMainStatusHandler
