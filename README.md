@@ -8,7 +8,7 @@ RxID: **0x001F**
 
 
 # Request
-1) AIR1(+) and AIR2(-) current value:
+1) AIRs average current value:
 
 |RxID  |2      |0x3D   |0x01   |
 |------|-------|-------|-------|
@@ -16,10 +16,10 @@ RxID: **0x001F**
 
 2) Tractive system activation:
 
-|RxID                             |3      |       |0x02   |0xNN       |Range |Units|
-|---------------------------------|-------|-------|-------|-----------|------|-----|
-|                                 |DLC    |WRITE  |RegID  |data[0-7]  |8bit  |0-1  |
-|AIR1 and AIR2 value:(1-0N, 0-OFF)|       |       |       |           |      |     |
+|RxID            |3      |       |0x02   |0xNN       |Range |Units|
+|----------------|-------|-------|-------|-----------|------|-----|
+|                |DLC    |WRITE  |RegID  |data[0-7]  |8bit  |0-1  |
+|(1-0N, 0-OFF)   |       |       |       |           |      |     |
 
 3) Insulation resistance value:
 
@@ -35,7 +35,7 @@ RxID: **0x001F**
 |MAIN status value:(1-0N, 0-OFF)|       |       |       |           |      |     |
 
 # Respond
-1) AIR1(+) and AIR2(-) average current value:
+1) AIRs average current value:
 
 |TxID  |3      |0x02   |0xNN      |0xNN       |Range |Units    |
 |------|-------|-------|----------|-----------|------|---------|
@@ -48,25 +48,25 @@ RxID: **0x001F**
 |      |DLC    |RegID  |data[0-7] |data[8-15] |16bit |0-65536  |
 
 # Error list
-1) AIR1(+) overcurrent:
+1) AIR_P overcurrent:
 
 |TxID  |2      |0x1D   |0x01   |
 |------|-------|-------|-------|
 |      |DLC    |ERROR  |Code   |
 
-2) AIR2(-) overcurrent:
+2) AIR_N overcurrent:
 
 |TxID  |2      |0x1D   |0x02   |
 |------|-------|-------|-------|
 |      |DLC    |ERROR  |Code   |
 
-3) AIR1(+) status Error:
+3) AIR_P status Error:
 
 |TxID  |2      |0x1D   |0x03   |
 |------|-------|-------|-------|
 |      |DLC    |ERROR  |Code   |
 
-4) AIR2(-) status Error:
+4) AIR_P status Error:
 
 |TxID  |2      |0x1D   |0x04   |
 |------|-------|-------|-------|

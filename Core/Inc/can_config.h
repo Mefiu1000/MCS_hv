@@ -36,7 +36,7 @@
 // All of Reg1 - RegN should be replaced by meaningful name of reg (don't delete prefixs)
 typedef enum
 {
-	Read_AIRs_Value_ID = 0x01u, // ADC AIR1 AIR2  current values channel 6, 7 read
+	Read_AIRs_Value_ID = 0x01u, // ADC AIR_P AIR_N  current values channel 6, 7 read
 	Read_Ins_R_Value_ID = 0x03u //Insulation resistance value
 } ReadRegsID;
 
@@ -48,10 +48,10 @@ typedef enum
 
 typedef enum
 {
-	Error_AIR1_Overcurrent_ID = 0x001u,
-	Error_AIR2_Overcurrent_ID = 0x002u,
-	Error_AIR1_ID = 0x003u,
-	Error_AIR2_ID = 0x004u,
+	Error_AIR_P_Overcurrent_ID = 0x001u,
+	Error_AIR_N_Overcurrent_ID = 0x002u,
+	Error_AIR_P_ID = 0x003u,
+	Error_AIR_N_ID = 0x004u,
 	Error_IMD_Short_Circuit_24V_ID = 0x005u,
 	Error_IMD_Insulation_Measurement_ID = 0x006u,
 	Error_IMD_Under_Voltage_ID = 0x007u,

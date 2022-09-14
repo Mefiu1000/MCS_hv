@@ -72,13 +72,13 @@ float Duty_Cycle = 0;
 uint8_t Read_Ins_resistance[2];
 /*IMD PWM */
 
-uint16_t AIR1_Current, AIR2_Current;
+uint16_t AIR_P_Current, AIR_N_Current;
 uint8_t Read_AIR_AVG[2];
 
 _Bool Write_MAIN_Status = 0; //init value 0 or 1????
 
-_Bool Write_AIR1_ON;
-_Bool AIR1_STATUS, AIR2_STATUS;
+_Bool Write_AIR_N_Control;
+_Bool AIR_N_STATUS, AIR_P_STATUS;
 
 uint32_t Timer_MAIN;
 /* USER CODE END PV */
@@ -86,7 +86,7 @@ uint32_t Timer_MAIN;
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 /* USER CODE BEGIN PFP */
-void AIR1_AIR2_Check(void);
+void AIRs_Check(void);
 void IMD_ShortCircuitTo24VError_Handler(void);
 void IMD_InsulationMeasurementError_Handler(void);
 void IMD_UnderVoltageError_Handler(void);
@@ -94,7 +94,7 @@ void IMD_SpeedStartError_Handler(void);
 void IMD_DeviceError_Handler(void);
 void IMD_ConFaultEarthError_Handler(void);
 void IMD_MalfunctionError_Handler(void);
-void AIR1_AIR2_Current_Measurment(void);
+void AIRs_Current_Measurment(void);
 void MAIN_Status_Check(void);
 void Set_ADC_Channel(uint32_t Channel);
 
@@ -155,7 +155,7 @@ int main(void)
 		{
 			MAIN_Status_Check();
 		}
-		AIR1_AIR2_Check();
+		AIRs_Check();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -238,7 +238,7 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim) //tim1, measuring IMD s
 		switch (Frequency)
 		{
 		case 0:
-			if (HAL_GPIO_ReadPin(IMD_M_LS_uC_GPIO_Port, IMD_M_LS_uC_Pin) == GPIO_PIN_SET) IMD_ShortCircuitTo24VError_Handler();
+			if (HAL_GPIO_ReadPin(IMD_M_HS_uC_GPIO_Port, IMD_M_HS_uC_Pin) == GPIO_PIN_SET) IMD_ShortCircuitTo24VError_Handler();
 			break;
 		case 10:
 			if (( (int8_t)Duty_Cycle >= 5 ) && ( (int8_t)Duty_Cycle <= 95 )) ; //all OK
@@ -336,77 +336,80 @@ void IMD_MalfunctionError_Handler(void)
 	CAN_ReportError(Error_IMD_Malfunction_ID);
 }
 
-/** AIR1_AIR2_Current_Measurment
+/** AIRs_Current_Measurment
  * @brief Function which measures AIRs actual amperage
  * and calculate their average value
  *
  * @retval None.
  **/
-void AIR1_AIR2_Current_Measurment(void)
+void AIRs_Current_Measurment(void)
 {
 	/* AIRs current measurement and check BEGIN */
-	Set_ADC_Channel(ADC_CHANNEL_6); //Switch to channel 6
+	Set_ADC_Channel(ADC_CHANNEL_8); //Switch to channel 8
 	HAL_ADC_Start(&hadc); //start conversion
 
 	if (HAL_ADC_PollForConversion(&hadc, 1000) == HAL_OK)
 	{
-		AIR1_Current = HAL_ADC_GetValue(&hadc); // Read AIR1 current value
+		AIR_P_Current = HAL_ADC_GetValue(&hadc); // Read AIR_P current value
 	}
 
-	Set_ADC_Channel(ADC_CHANNEL_7); //Switch to channel 7
+	Set_ADC_Channel(ADC_CHANNEL_9); //Switch to channel 9
 	HAL_ADC_Start(&hadc); //start conversion
 
 	if (HAL_ADC_PollForConversion(&hadc, 1000) == HAL_OK)
 	{
-		AIR2_Current = HAL_ADC_GetValue(&hadc); // Read AIR2 current value
+		AIR_N_Current = HAL_ADC_GetValue(&hadc); // Read AIR_N current value
 	}
 
 	//Current calc V(I) = 0.0034 *I + 2.5 -> I = (V(I) - 2.5) / 0.0034, equation from datasheet
-	AIR1_Current = (uint16_t)( ( (float)( AIR1_Current - 2.5 ) ) / 0.0034 );
-	AIR2_Current = (uint16_t)( ( (float)( AIR2_Current - 2.5 ) ) / 0.0034 );
-	Read_AIR_AVG[0] = ( ( AIR1_Current + AIR2_Current ) / 2 ); 		  //LSB
-	Read_AIR_AVG[1] = ( ( ( AIR1_Current + AIR2_Current ) / 2 ) >> 8 ); //MSB
+	AIR_P_Current = (uint16_t)( ( (float)( AIR_P_Current - 2.5 ) ) / 0.0034 );
+	AIR_N_Current = (uint16_t)( ( (float)( AIR_N_Current - 2.5 ) ) / 0.0034 );
+	Read_AIR_AVG[0] = ( ( AIR_P_Current + AIR_N_Current ) / 2 ); 		  //LSB
+	Read_AIR_AVG[1] = ( ( ( AIR_P_Current + AIR_N_Current ) / 2 ) >> 8 ); //MSB
 }
 
-/** AIR1_AIR2_Check
+/** AIRs_Check
  * @brief Function which monitor AIRs amperage
- * and reports error via CAN if they don't conduct current
+ * and reports error via CAN in case of:
+ * -overcurrent
+ * -current divergence
+ * -not conducting current
  *
  * @retval None.
  **/
-void AIR1_AIR2_Check(void)
+void AIRs_Check(void)
 {
-	AIR1_AIR2_Current_Measurment();
+	AIRs_Current_Measurment();
 
-	if (AIR1_Current > MAX_CURRENT)
+	if (AIR_P_Current > MAX_CURRENT)
 	{
-		CAN_ReportError(Error_AIR1_Overcurrent_ID);
+		CAN_ReportError(Error_AIR_P_Overcurrent_ID);
 	}
-	if (AIR2_Current > MAX_CURRENT)
+	if (AIR_N_Current > MAX_CURRENT)
 	{
-		CAN_ReportError(Error_AIR2_Overcurrent_ID);
+		CAN_ReportError(Error_AIR_N_Overcurrent_ID);
 	}
-	if (abs(AIR1_Current - AIR2_Current) > MAX_CURRENT_DIVERGENCE)
+	if (abs(AIR_P_Current - AIR_N_Current) > MAX_CURRENT_DIVERGENCE)
 	{
 		CAN_ReportError(Error_AIRs_Current_Divergence_ID);
 	}
 
-	Write_AIR1_ON = HAL_GPIO_ReadPin(AIR1_ON_uC_GPIO_Port, AIR1_ON_uC_Pin); //AIR1 turned on/off
-	AIR1_STATUS = HAL_GPIO_ReadPin(AIR1_STATUS_uC_GPIO_Port,
-	AIR1_STATUS_uC_Pin); // AIR1 conducting current
+	Write_AIR_N_Control = HAL_GPIO_ReadPin(AIR_N_CONTROL_uC_GPIO_Port, AIR_N_CONTROL_uC_Pin); //AIR_N turned on/off
+	AIR_N_STATUS = HAL_GPIO_ReadPin(AIR_N_STATUS_uC_GPIO_Port,
+	AIR_N_STATUS_uC_Pin); // AIR_N conducting current
 
-	AIR2_STATUS = HAL_GPIO_ReadPin(AIR2_STATUS_uC_GPIO_Port,
-	AIR2_STATUS_uC_Pin); // AIR2 conducting current
+	AIR_P_STATUS = HAL_GPIO_ReadPin(AIR_P_STATUS_uC_GPIO_Port,
+	AIR_P_STATUS_uC_Pin); // AIR_P conducting current
 
-	//AIR1 state check, if AIR1 is turned on but doesn't conduct current, send error
-	if (( Write_AIR1_ON == GPIO_PIN_SET ) && ( AIR1_STATUS == GPIO_PIN_RESET ))
+	//AIR_N state check, if AIR_N is turned on but doesn't conduct current, send error
+	if (( Write_AIR_N_Control == GPIO_PIN_SET ) && ( AIR_N_STATUS == GPIO_PIN_RESET ))
 	{
-		CAN_ReportError(Error_AIR1_ID);
+		CAN_ReportError(Error_AIR_P_ID);
 	}
 	//Both airs should conduct current at the same time
-	if(( AIR1_STATUS == GPIO_PIN_SET ) && ( AIR2_STATUS == GPIO_PIN_RESET ))
+	if(( AIR_N_STATUS == GPIO_PIN_SET ) && ( AIR_P_STATUS == GPIO_PIN_RESET ))
 	{
-		CAN_ReportError(Error_AIR2_ID);
+		CAN_ReportError(Error_AIR_N_ID);
 	}
 }
 
@@ -420,7 +423,7 @@ void MAIN_Status_Check(void)
 {
 	if (Write_MAIN_Status == 0) //MAIN always should be ON
 	{
-		HAL_GPIO_WritePin(AIR1_ON_uC_GPIO_Port, AIR1_ON_uC_Pin, Write_MAIN_Status);
+		HAL_GPIO_WritePin(AIR_N_CONTROL_uC_GPIO_Port, AIR_N_CONTROL_uC_Pin, Write_MAIN_Status);
 	}
 	else //reset main status
 	{
