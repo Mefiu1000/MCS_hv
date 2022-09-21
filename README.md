@@ -1,7 +1,5 @@
 # MCS_hv
 
-![flowchart_canconfig](can_config.png)
-
 Adresses:
 
 TxID: **0x001A**

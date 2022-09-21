@@ -3686,135 +3686,134 @@ void AIRs_Check(void)
 {
  8001b1c:	b580      	push	{r7, lr}
  8001b1e:	af00      	add	r7, sp, #0
+	AIRs_Current_Measurment();
+ 8001b20:	f7ff ff5c 	bl	80019dc <AIRs_Current_Measurment>
+
+	if (AIR_P_Current > MAX_CURRENT)
+ 8001b24:	4b2f      	ldr	r3, [pc, #188]	; (8001be4 <AIRs_Check+0xc8>)
+ 8001b26:	881b      	ldrh	r3, [r3, #0]
+ 8001b28:	2b05      	cmp	r3, #5
+ 8001b2a:	d902      	bls.n	8001b32 <AIRs_Check+0x16>
+	{
+		CAN_ReportError(Error_AIR_P_Overcurrent_ID);
+ 8001b2c:	2001      	movs	r0, #1
+ 8001b2e:	f7ff fe0b 	bl	8001748 <CAN_ReportError>
+	}
+	if (AIR_N_Current > MAX_CURRENT)
+ 8001b32:	4b2d      	ldr	r3, [pc, #180]	; (8001be8 <AIRs_Check+0xcc>)
+ 8001b34:	881b      	ldrh	r3, [r3, #0]
+ 8001b36:	2b05      	cmp	r3, #5
+ 8001b38:	d902      	bls.n	8001b40 <AIRs_Check+0x24>
+	{
+		CAN_ReportError(Error_AIR_N_Overcurrent_ID);
+ 8001b3a:	2002      	movs	r0, #2
+ 8001b3c:	f7ff fe04 	bl	8001748 <CAN_ReportError>
+	}
+	if (abs(AIR_P_Current - AIR_N_Current) > MAX_CURRENT_DIVERGENCE)
+ 8001b40:	4b28      	ldr	r3, [pc, #160]	; (8001be4 <AIRs_Check+0xc8>)
+ 8001b42:	881b      	ldrh	r3, [r3, #0]
+ 8001b44:	001a      	movs	r2, r3
+ 8001b46:	4b28      	ldr	r3, [pc, #160]	; (8001be8 <AIRs_Check+0xcc>)
+ 8001b48:	881b      	ldrh	r3, [r3, #0]
+ 8001b4a:	1ad3      	subs	r3, r2, r3
+ 8001b4c:	17da      	asrs	r2, r3, #31
+ 8001b4e:	189b      	adds	r3, r3, r2
+ 8001b50:	4053      	eors	r3, r2
+ 8001b52:	2b00      	cmp	r3, #0
+ 8001b54:	dd02      	ble.n	8001b5c <AIRs_Check+0x40>
+	{
+		CAN_ReportError(Error_AIRs_Current_Divergence_ID);
+ 8001b56:	200c      	movs	r0, #12
+ 8001b58:	f7ff fdf6 	bl	8001748 <CAN_ReportError>
+	}
+
 	Write_AIR_N_Control = HAL_GPIO_ReadPin(AIR_N_CONTROL_uC_GPIO_Port, AIR_N_CONTROL_uC_Pin); //AIR_N turned on/off
- 8001b20:	2380      	movs	r3, #128	; 0x80
- 8001b22:	011b      	lsls	r3, r3, #4
- 8001b24:	4a2f      	ldr	r2, [pc, #188]	; (8001be4 <AIRs_Check+0xc8>)
- 8001b26:	0019      	movs	r1, r3
- 8001b28:	0010      	movs	r0, r2
- 8001b2a:	f001 fabb 	bl	80030a4 <HAL_GPIO_ReadPin>
- 8001b2e:	0003      	movs	r3, r0
- 8001b30:	1e5a      	subs	r2, r3, #1
- 8001b32:	4193      	sbcs	r3, r2
- 8001b34:	b2da      	uxtb	r2, r3
- 8001b36:	4b2c      	ldr	r3, [pc, #176]	; (8001be8 <AIRs_Check+0xcc>)
- 8001b38:	701a      	strb	r2, [r3, #0]
+ 8001b5c:	2380      	movs	r3, #128	; 0x80
+ 8001b5e:	011b      	lsls	r3, r3, #4
+ 8001b60:	4a22      	ldr	r2, [pc, #136]	; (8001bec <AIRs_Check+0xd0>)
+ 8001b62:	0019      	movs	r1, r3
+ 8001b64:	0010      	movs	r0, r2
+ 8001b66:	f001 fa9d 	bl	80030a4 <HAL_GPIO_ReadPin>
+ 8001b6a:	0003      	movs	r3, r0
+ 8001b6c:	1e5a      	subs	r2, r3, #1
+ 8001b6e:	4193      	sbcs	r3, r2
+ 8001b70:	b2da      	uxtb	r2, r3
+ 8001b72:	4b1f      	ldr	r3, [pc, #124]	; (8001bf0 <AIRs_Check+0xd4>)
+ 8001b74:	701a      	strb	r2, [r3, #0]
 	AIR_N_STATUS = HAL_GPIO_ReadPin(AIR_N_STATUS_uC_GPIO_Port,
- 8001b3a:	2380      	movs	r3, #128	; 0x80
- 8001b3c:	00db      	lsls	r3, r3, #3
- 8001b3e:	4a29      	ldr	r2, [pc, #164]	; (8001be4 <AIRs_Check+0xc8>)
- 8001b40:	0019      	movs	r1, r3
- 8001b42:	0010      	movs	r0, r2
- 8001b44:	f001 faae 	bl	80030a4 <HAL_GPIO_ReadPin>
- 8001b48:	0003      	movs	r3, r0
- 8001b4a:	1e5a      	subs	r2, r3, #1
- 8001b4c:	4193      	sbcs	r3, r2
- 8001b4e:	b2da      	uxtb	r2, r3
- 8001b50:	4b26      	ldr	r3, [pc, #152]	; (8001bec <AIRs_Check+0xd0>)
- 8001b52:	701a      	strb	r2, [r3, #0]
+ 8001b76:	2380      	movs	r3, #128	; 0x80
+ 8001b78:	00db      	lsls	r3, r3, #3
+ 8001b7a:	4a1c      	ldr	r2, [pc, #112]	; (8001bec <AIRs_Check+0xd0>)
+ 8001b7c:	0019      	movs	r1, r3
+ 8001b7e:	0010      	movs	r0, r2
+ 8001b80:	f001 fa90 	bl	80030a4 <HAL_GPIO_ReadPin>
+ 8001b84:	0003      	movs	r3, r0
+ 8001b86:	1e5a      	subs	r2, r3, #1
+ 8001b88:	4193      	sbcs	r3, r2
+ 8001b8a:	b2da      	uxtb	r2, r3
+ 8001b8c:	4b19      	ldr	r3, [pc, #100]	; (8001bf4 <AIRs_Check+0xd8>)
+ 8001b8e:	701a      	strb	r2, [r3, #0]
 	AIR_N_STATUS_uC_Pin); // AIR_N conducting current
 
 	AIR_P_STATUS = HAL_GPIO_ReadPin(AIR_P_STATUS_uC_GPIO_Port,
- 8001b54:	4b23      	ldr	r3, [pc, #140]	; (8001be4 <AIRs_Check+0xc8>)
- 8001b56:	2104      	movs	r1, #4
- 8001b58:	0018      	movs	r0, r3
- 8001b5a:	f001 faa3 	bl	80030a4 <HAL_GPIO_ReadPin>
- 8001b5e:	0003      	movs	r3, r0
- 8001b60:	1e5a      	subs	r2, r3, #1
- 8001b62:	4193      	sbcs	r3, r2
- 8001b64:	b2da      	uxtb	r2, r3
- 8001b66:	4b22      	ldr	r3, [pc, #136]	; (8001bf0 <AIRs_Check+0xd4>)
- 8001b68:	701a      	strb	r2, [r3, #0]
+ 8001b90:	4b16      	ldr	r3, [pc, #88]	; (8001bec <AIRs_Check+0xd0>)
+ 8001b92:	2104      	movs	r1, #4
+ 8001b94:	0018      	movs	r0, r3
+ 8001b96:	f001 fa85 	bl	80030a4 <HAL_GPIO_ReadPin>
+ 8001b9a:	0003      	movs	r3, r0
+ 8001b9c:	1e5a      	subs	r2, r3, #1
+ 8001b9e:	4193      	sbcs	r3, r2
+ 8001ba0:	b2da      	uxtb	r2, r3
+ 8001ba2:	4b15      	ldr	r3, [pc, #84]	; (8001bf8 <AIRs_Check+0xdc>)
+ 8001ba4:	701a      	strb	r2, [r3, #0]
 	AIR_P_STATUS_uC_Pin); // AIR_P conducting current
 
 	//AIR_N state check, if AIR_N is turned on but doesn't conduct current, send error
 	if (( Write_AIR_N_Control == GPIO_PIN_SET ) && ( AIR_N_STATUS == GPIO_PIN_RESET ))
- 8001b6a:	4b1f      	ldr	r3, [pc, #124]	; (8001be8 <AIRs_Check+0xcc>)
- 8001b6c:	781b      	ldrb	r3, [r3, #0]
- 8001b6e:	2b00      	cmp	r3, #0
- 8001b70:	d009      	beq.n	8001b86 <AIRs_Check+0x6a>
- 8001b72:	4b1e      	ldr	r3, [pc, #120]	; (8001bec <AIRs_Check+0xd0>)
- 8001b74:	781b      	ldrb	r3, [r3, #0]
- 8001b76:	2201      	movs	r2, #1
- 8001b78:	4053      	eors	r3, r2
- 8001b7a:	b2db      	uxtb	r3, r3
- 8001b7c:	2b00      	cmp	r3, #0
- 8001b7e:	d002      	beq.n	8001b86 <AIRs_Check+0x6a>
+ 8001ba6:	4b12      	ldr	r3, [pc, #72]	; (8001bf0 <AIRs_Check+0xd4>)
+ 8001ba8:	781b      	ldrb	r3, [r3, #0]
+ 8001baa:	2b00      	cmp	r3, #0
+ 8001bac:	d009      	beq.n	8001bc2 <AIRs_Check+0xa6>
+ 8001bae:	4b11      	ldr	r3, [pc, #68]	; (8001bf4 <AIRs_Check+0xd8>)
+ 8001bb0:	781b      	ldrb	r3, [r3, #0]
+ 8001bb2:	2201      	movs	r2, #1
+ 8001bb4:	4053      	eors	r3, r2
+ 8001bb6:	b2db      	uxtb	r3, r3
+ 8001bb8:	2b00      	cmp	r3, #0
+ 8001bba:	d002      	beq.n	8001bc2 <AIRs_Check+0xa6>
 	{
 		CAN_ReportError(Error_AIR_P_ID);
- 8001b80:	2003      	movs	r0, #3
- 8001b82:	f7ff fde1 	bl	8001748 <CAN_ReportError>
+ 8001bbc:	2003      	movs	r0, #3
+ 8001bbe:	f7ff fdc3 	bl	8001748 <CAN_ReportError>
 	}
 	//Both airs should conduct current at the same time
 	if(( AIR_N_STATUS == GPIO_PIN_SET ) && ( AIR_P_STATUS == GPIO_PIN_RESET ))
- 8001b86:	4b19      	ldr	r3, [pc, #100]	; (8001bec <AIRs_Check+0xd0>)
- 8001b88:	781b      	ldrb	r3, [r3, #0]
- 8001b8a:	2b00      	cmp	r3, #0
- 8001b8c:	d009      	beq.n	8001ba2 <AIRs_Check+0x86>
- 8001b8e:	4b18      	ldr	r3, [pc, #96]	; (8001bf0 <AIRs_Check+0xd4>)
- 8001b90:	781b      	ldrb	r3, [r3, #0]
- 8001b92:	2201      	movs	r2, #1
- 8001b94:	4053      	eors	r3, r2
- 8001b96:	b2db      	uxtb	r3, r3
- 8001b98:	2b00      	cmp	r3, #0
- 8001b9a:	d002      	beq.n	8001ba2 <AIRs_Check+0x86>
+ 8001bc2:	4b0c      	ldr	r3, [pc, #48]	; (8001bf4 <AIRs_Check+0xd8>)
+ 8001bc4:	781b      	ldrb	r3, [r3, #0]
+ 8001bc6:	2b00      	cmp	r3, #0
+ 8001bc8:	d009      	beq.n	8001bde <AIRs_Check+0xc2>
+ 8001bca:	4b0b      	ldr	r3, [pc, #44]	; (8001bf8 <AIRs_Check+0xdc>)
+ 8001bcc:	781b      	ldrb	r3, [r3, #0]
+ 8001bce:	2201      	movs	r2, #1
+ 8001bd0:	4053      	eors	r3, r2
+ 8001bd2:	b2db      	uxtb	r3, r3
+ 8001bd4:	2b00      	cmp	r3, #0
+ 8001bd6:	d002      	beq.n	8001bde <AIRs_Check+0xc2>
 	{
 		CAN_ReportError(Error_AIR_N_ID);
- 8001b9c:	2004      	movs	r0, #4
- 8001b9e:	f7ff fdd3 	bl	8001748 <CAN_ReportError>
-	}
-
-	AIRs_Current_Measurment();
- 8001ba2:	f7ff ff1b 	bl	80019dc <AIRs_Current_Measurment>
-
-	if (AIR_P_Current > MAX_CURRENT)
- 8001ba6:	4b13      	ldr	r3, [pc, #76]	; (8001bf4 <AIRs_Check+0xd8>)
- 8001ba8:	881b      	ldrh	r3, [r3, #0]
- 8001baa:	2b05      	cmp	r3, #5
- 8001bac:	d902      	bls.n	8001bb4 <AIRs_Check+0x98>
-	{
-		CAN_ReportError(Error_AIR_P_Overcurrent_ID);
- 8001bae:	2001      	movs	r0, #1
- 8001bb0:	f7ff fdca 	bl	8001748 <CAN_ReportError>
-	}
-	if (AIR_N_Current > MAX_CURRENT)
- 8001bb4:	4b10      	ldr	r3, [pc, #64]	; (8001bf8 <AIRs_Check+0xdc>)
- 8001bb6:	881b      	ldrh	r3, [r3, #0]
- 8001bb8:	2b05      	cmp	r3, #5
- 8001bba:	d902      	bls.n	8001bc2 <AIRs_Check+0xa6>
-	{
-		CAN_ReportError(Error_AIR_N_Overcurrent_ID);
- 8001bbc:	2002      	movs	r0, #2
- 8001bbe:	f7ff fdc3 	bl	8001748 <CAN_ReportError>
-	}
-	if (abs(AIR_P_Current - AIR_N_Current) > MAX_CURRENT_DIVERGENCE)
- 8001bc2:	4b0c      	ldr	r3, [pc, #48]	; (8001bf4 <AIRs_Check+0xd8>)
- 8001bc4:	881b      	ldrh	r3, [r3, #0]
- 8001bc6:	001a      	movs	r2, r3
- 8001bc8:	4b0b      	ldr	r3, [pc, #44]	; (8001bf8 <AIRs_Check+0xdc>)
- 8001bca:	881b      	ldrh	r3, [r3, #0]
- 8001bcc:	1ad3      	subs	r3, r2, r3
- 8001bce:	17da      	asrs	r2, r3, #31
- 8001bd0:	189b      	adds	r3, r3, r2
- 8001bd2:	4053      	eors	r3, r2
- 8001bd4:	2b00      	cmp	r3, #0
- 8001bd6:	dd02      	ble.n	8001bde <AIRs_Check+0xc2>
-	{
-		CAN_ReportError(Error_AIRs_Current_Divergence_ID);
- 8001bd8:	200c      	movs	r0, #12
+ 8001bd8:	2004      	movs	r0, #4
  8001bda:	f7ff fdb5 	bl	8001748 <CAN_ReportError>
 	}
-
 }
  8001bde:	46c0      	nop			; (mov r8, r8)
  8001be0:	46bd      	mov	sp, r7
  8001be2:	bd80      	pop	{r7, pc}
- 8001be4:	48000400 	.word	0x48000400
- 8001be8:	200000bb 	.word	0x200000bb
- 8001bec:	200000bc 	.word	0x200000bc
- 8001bf0:	200000bd 	.word	0x200000bd
- 8001bf4:	200000b4 	.word	0x200000b4
- 8001bf8:	200000b6 	.word	0x200000b6
+ 8001be4:	200000b4 	.word	0x200000b4
+ 8001be8:	200000b6 	.word	0x200000b6
+ 8001bec:	48000400 	.word	0x48000400
+ 8001bf0:	200000bb 	.word	0x200000bb
+ 8001bf4:	200000bc 	.word	0x200000bc
+ 8001bf8:	200000bd 	.word	0x200000bd
 
 08001bfc <MAIN_Status_Check>:
  * and turns OFF Tractive System if MAIN is not ON
