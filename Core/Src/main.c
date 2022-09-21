@@ -379,21 +379,6 @@ void AIRs_Current_Measurment(void)
  **/
 void AIRs_Check(void)
 {
-	AIRs_Current_Measurment();
-
-	if (AIR_P_Current > MAX_CURRENT)
-	{
-		CAN_ReportError(Error_AIR_P_Overcurrent_ID);
-	}
-	if (AIR_N_Current > MAX_CURRENT)
-	{
-		CAN_ReportError(Error_AIR_N_Overcurrent_ID);
-	}
-	if (abs(AIR_P_Current - AIR_N_Current) > MAX_CURRENT_DIVERGENCE)
-	{
-		CAN_ReportError(Error_AIRs_Current_Divergence_ID);
-	}
-
 	Write_AIR_N_Control = HAL_GPIO_ReadPin(AIR_N_CONTROL_uC_GPIO_Port, AIR_N_CONTROL_uC_Pin); //AIR_N turned on/off
 	AIR_N_STATUS = HAL_GPIO_ReadPin(AIR_N_STATUS_uC_GPIO_Port,
 	AIR_N_STATUS_uC_Pin); // AIR_N conducting current
@@ -411,6 +396,22 @@ void AIRs_Check(void)
 	{
 		CAN_ReportError(Error_AIR_N_ID);
 	}
+
+	AIRs_Current_Measurment();
+
+	if (AIR_P_Current > MAX_CURRENT)
+	{
+		CAN_ReportError(Error_AIR_P_Overcurrent_ID);
+	}
+	if (AIR_N_Current > MAX_CURRENT)
+	{
+		CAN_ReportError(Error_AIR_N_Overcurrent_ID);
+	}
+	if (abs(AIR_P_Current - AIR_N_Current) > MAX_CURRENT_DIVERGENCE)
+	{
+		CAN_ReportError(Error_AIRs_Current_Divergence_ID);
+	}
+
 }
 
 /** MAIN_Status_Check
