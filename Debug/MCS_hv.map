@@ -1169,7 +1169,7 @@ Discarded input sections
  .data          0x0000000000000000        0x0 ./Core/Src/usart.o
  .bss           0x0000000000000000        0x0 ./Core/Src/usart.o
  .text.HAL_UART_MspDeInit
-                0x0000000000000000       0x44 ./Core/Src/usart.o
+                0x0000000000000000       0x40 ./Core/Src/usart.o
  .debug_macro   0x0000000000000000      0xa4e ./Core/Src/usart.o
  .debug_macro   0x0000000000000000      0x13f ./Core/Src/usart.o
  .debug_macro   0x0000000000000000       0x2e ./Core/Src/usart.o

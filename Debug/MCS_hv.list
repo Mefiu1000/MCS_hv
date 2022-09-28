@@ -4497,23 +4497,23 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
   if(uartHandle->Instance==USART1)
  8001f50:	687b      	ldr	r3, [r7, #4]
  8001f52:	681b      	ldr	r3, [r3, #0]
- 8001f54:	4a1d      	ldr	r2, [pc, #116]	; (8001fcc <HAL_UART_MspInit+0x94>)
+ 8001f54:	4a1c      	ldr	r2, [pc, #112]	; (8001fc8 <HAL_UART_MspInit+0x90>)
  8001f56:	4293      	cmp	r3, r2
- 8001f58:	d133      	bne.n	8001fc2 <HAL_UART_MspInit+0x8a>
+ 8001f58:	d131      	bne.n	8001fbe <HAL_UART_MspInit+0x86>
   {
   /* USER CODE BEGIN USART1_MspInit 0 */
 
   /* USER CODE END USART1_MspInit 0 */
     /* USART1 clock enable */
     __HAL_RCC_USART1_CLK_ENABLE();
- 8001f5a:	4b1d      	ldr	r3, [pc, #116]	; (8001fd0 <HAL_UART_MspInit+0x98>)
+ 8001f5a:	4b1c      	ldr	r3, [pc, #112]	; (8001fcc <HAL_UART_MspInit+0x94>)
  8001f5c:	699a      	ldr	r2, [r3, #24]
- 8001f5e:	4b1c      	ldr	r3, [pc, #112]	; (8001fd0 <HAL_UART_MspInit+0x98>)
+ 8001f5e:	4b1b      	ldr	r3, [pc, #108]	; (8001fcc <HAL_UART_MspInit+0x94>)
  8001f60:	2180      	movs	r1, #128	; 0x80
  8001f62:	01c9      	lsls	r1, r1, #7
  8001f64:	430a      	orrs	r2, r1
  8001f66:	619a      	str	r2, [r3, #24]
- 8001f68:	4b19      	ldr	r3, [pc, #100]	; (8001fd0 <HAL_UART_MspInit+0x98>)
+ 8001f68:	4b18      	ldr	r3, [pc, #96]	; (8001fcc <HAL_UART_MspInit+0x94>)
  8001f6a:	699a      	ldr	r2, [r3, #24]
  8001f6c:	2380      	movs	r3, #128	; 0x80
  8001f6e:	01db      	lsls	r3, r3, #7
@@ -4521,67 +4521,66 @@ void HAL_UART_MspInit(UART_HandleTypeDef* uartHandle)
  8001f72:	613b      	str	r3, [r7, #16]
  8001f74:	693b      	ldr	r3, [r7, #16]
 
-    __HAL_RCC_GPIOA_CLK_ENABLE();
- 8001f76:	4b16      	ldr	r3, [pc, #88]	; (8001fd0 <HAL_UART_MspInit+0x98>)
+    __HAL_RCC_GPIOB_CLK_ENABLE();
+ 8001f76:	4b15      	ldr	r3, [pc, #84]	; (8001fcc <HAL_UART_MspInit+0x94>)
  8001f78:	695a      	ldr	r2, [r3, #20]
- 8001f7a:	4b15      	ldr	r3, [pc, #84]	; (8001fd0 <HAL_UART_MspInit+0x98>)
+ 8001f7a:	4b14      	ldr	r3, [pc, #80]	; (8001fcc <HAL_UART_MspInit+0x94>)
  8001f7c:	2180      	movs	r1, #128	; 0x80
- 8001f7e:	0289      	lsls	r1, r1, #10
+ 8001f7e:	02c9      	lsls	r1, r1, #11
  8001f80:	430a      	orrs	r2, r1
  8001f82:	615a      	str	r2, [r3, #20]
- 8001f84:	4b12      	ldr	r3, [pc, #72]	; (8001fd0 <HAL_UART_MspInit+0x98>)
+ 8001f84:	4b11      	ldr	r3, [pc, #68]	; (8001fcc <HAL_UART_MspInit+0x94>)
  8001f86:	695a      	ldr	r2, [r3, #20]
  8001f88:	2380      	movs	r3, #128	; 0x80
- 8001f8a:	029b      	lsls	r3, r3, #10
+ 8001f8a:	02db      	lsls	r3, r3, #11
  8001f8c:	4013      	ands	r3, r2
  8001f8e:	60fb      	str	r3, [r7, #12]
  8001f90:	68fb      	ldr	r3, [r7, #12]
     /**USART1 GPIO Configuration
-    PA9     ------> USART1_TX
-    PA10     ------> USART1_RX
+    PB6     ------> USART1_TX
+    PB7     ------> USART1_RX
     */
-    GPIO_InitStruct.Pin = GPIO_PIN_9|GPIO_PIN_10;
- 8001f92:	193b      	adds	r3, r7, r4
- 8001f94:	22c0      	movs	r2, #192	; 0xc0
- 8001f96:	00d2      	lsls	r2, r2, #3
+    GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
+ 8001f92:	0021      	movs	r1, r4
+ 8001f94:	187b      	adds	r3, r7, r1
+ 8001f96:	22c0      	movs	r2, #192	; 0xc0
  8001f98:	601a      	str	r2, [r3, #0]
     GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
- 8001f9a:	0021      	movs	r1, r4
- 8001f9c:	187b      	adds	r3, r7, r1
- 8001f9e:	2202      	movs	r2, #2
- 8001fa0:	605a      	str	r2, [r3, #4]
+ 8001f9a:	187b      	adds	r3, r7, r1
+ 8001f9c:	2202      	movs	r2, #2
+ 8001f9e:	605a      	str	r2, [r3, #4]
     GPIO_InitStruct.Pull = GPIO_NOPULL;
- 8001fa2:	187b      	adds	r3, r7, r1
- 8001fa4:	2200      	movs	r2, #0
- 8001fa6:	609a      	str	r2, [r3, #8]
+ 8001fa0:	187b      	adds	r3, r7, r1
+ 8001fa2:	2200      	movs	r2, #0
+ 8001fa4:	609a      	str	r2, [r3, #8]
     GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
- 8001fa8:	187b      	adds	r3, r7, r1
- 8001faa:	2203      	movs	r2, #3
- 8001fac:	60da      	str	r2, [r3, #12]
-    GPIO_InitStruct.Alternate = GPIO_AF1_USART1;
- 8001fae:	187b      	adds	r3, r7, r1
- 8001fb0:	2201      	movs	r2, #1
- 8001fb2:	611a      	str	r2, [r3, #16]
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
- 8001fb4:	187a      	adds	r2, r7, r1
- 8001fb6:	2390      	movs	r3, #144	; 0x90
- 8001fb8:	05db      	lsls	r3, r3, #23
- 8001fba:	0011      	movs	r1, r2
- 8001fbc:	0018      	movs	r0, r3
- 8001fbe:	f000 ff09 	bl	8002dd4 <HAL_GPIO_Init>
+ 8001fa6:	187b      	adds	r3, r7, r1
+ 8001fa8:	2203      	movs	r2, #3
+ 8001faa:	60da      	str	r2, [r3, #12]
+    GPIO_InitStruct.Alternate = GPIO_AF0_USART1;
+ 8001fac:	187b      	adds	r3, r7, r1
+ 8001fae:	2200      	movs	r2, #0
+ 8001fb0:	611a      	str	r2, [r3, #16]
+    HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
+ 8001fb2:	187b      	adds	r3, r7, r1
+ 8001fb4:	4a06      	ldr	r2, [pc, #24]	; (8001fd0 <HAL_UART_MspInit+0x98>)
+ 8001fb6:	0019      	movs	r1, r3
+ 8001fb8:	0010      	movs	r0, r2
+ 8001fba:	f000 ff0b 	bl	8002dd4 <HAL_GPIO_Init>
 
   /* USER CODE BEGIN USART1_MspInit 1 */
 
   /* USER CODE END USART1_MspInit 1 */
   }
 }
- 8001fc2:	46c0      	nop			; (mov r8, r8)
- 8001fc4:	46bd      	mov	sp, r7
- 8001fc6:	b00b      	add	sp, #44	; 0x2c
- 8001fc8:	bd90      	pop	{r4, r7, pc}
- 8001fca:	46c0      	nop			; (mov r8, r8)
- 8001fcc:	40013800 	.word	0x40013800
- 8001fd0:	40021000 	.word	0x40021000
+ 8001fbe:	46c0      	nop			; (mov r8, r8)
+ 8001fc0:	46bd      	mov	sp, r7
+ 8001fc2:	b00b      	add	sp, #44	; 0x2c
+ 8001fc4:	bd90      	pop	{r4, r7, pc}
+ 8001fc6:	46c0      	nop			; (mov r8, r8)
+ 8001fc8:	40013800 	.word	0x40013800
+ 8001fcc:	40021000 	.word	0x40021000
+ 8001fd0:	48000400 	.word	0x48000400
 
 08001fd4 <Reset_Handler>:
 
