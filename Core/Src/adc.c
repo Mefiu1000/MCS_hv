@@ -101,7 +101,7 @@ void HAL_ADC_MspInit(ADC_HandleTypeDef* adcHandle)
     PB0     ------> ADC_IN8
     PB1     ------> ADC_IN9
     */
-    GPIO_InitStruct.Pin = AIR_P_CURRENT_SENSOR_Pin|AIR_N_CURRENT_SENSOR_Pin;
+    GPIO_InitStruct.Pin = AIR_P_CURRENT_SENSOR_uC_Pin|AIR_N_CURRENT_SENSOR_uC_Pin;
     GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
     GPIO_InitStruct.Pull = GPIO_NOPULL;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
@@ -127,7 +127,7 @@ void HAL_ADC_MspDeInit(ADC_HandleTypeDef* adcHandle)
     PB0     ------> ADC_IN8
     PB1     ------> ADC_IN9
     */
-    HAL_GPIO_DeInit(GPIOB, AIR_P_CURRENT_SENSOR_Pin|AIR_N_CURRENT_SENSOR_Pin);
+    HAL_GPIO_DeInit(GPIOB, AIR_P_CURRENT_SENSOR_uC_Pin|AIR_N_CURRENT_SENSOR_uC_Pin);
 
   /* USER CODE BEGIN ADC1_MspDeInit 1 */
 

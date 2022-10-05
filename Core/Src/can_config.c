@@ -25,7 +25,7 @@ uint32_t			 TxMailbox;
 
 /* Externs used in configs */
 
-extern _Bool Write_AIR_N_Control;
+extern _Bool Write_AIRs_Control;
 extern _Bool Write_MAIN_Status;
 
 extern uint8_t Read_Ins_resistance[2];
@@ -78,7 +78,7 @@ WriteMessageFrame WriteMessage[NUMBER_OF_WRITE_REGS] =
 		{
 			.Write_RegID           = Write_Tractive_System_State_ID, 	   // Reg which should be written by MCU command
 			.Write_ReactionHandler = WriteTractiveSystemStateHandler,        // Handler of reaction to write request from MCU
-			.Write_State1          = &Write_AIR_N_Control               // If this MCU command should change state of sth this pointer should point to variable which regards this state eg. if MCU want to light up brake light, this structure element should point to variable which contain the state of brake lights
+			.Write_State1          = &Write_AIRs_Control               // If this MCU command should change state of sth this pointer should point to variable which regards this state eg. if MCU want to light up brake light, this structure element should point to variable which contain the state of brake lights
 		},
 		{
 			.Write_RegID           = Write_MAIN_State_ID, 					// Reg which should be written by MCU command
@@ -324,7 +324,7 @@ void ReadInsulationResistanceValueHandler(void)
 void WriteTractiveSystemStateHandler(void)
 {
 	*( WriteMessage[0].Write_State1 ) = RxData[WriteData1];
-	HAL_GPIO_WritePin(AIR_N_CONTROL_uC_GPIO_Port, AIR_N_CONTROL_uC_Pin, *( WriteMessage[0].Write_State1 ));
+	HAL_GPIO_WritePin(AIRs_CONTROL_uC_GPIO_Port, AIRs_CONTROL_uC_Pin, *( WriteMessage[0].Write_State1 ));
 }
 
 /** WriteMainStatusHandler

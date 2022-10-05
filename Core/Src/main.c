@@ -77,7 +77,7 @@ uint8_t Read_AIR_AVG[2];
 
 _Bool Write_MAIN_Status = 0; //init value 0 or 1????
 
-_Bool Write_AIR_N_Control;
+_Bool Write_AIRs_CONTROL;
 _Bool AIR_N_STATUS, AIR_P_STATUS;
 
 uint32_t Timer_MAIN;
@@ -394,7 +394,7 @@ void AIRs_Check(void)
 		CAN_ReportError(Error_AIRs_Current_Divergence_ID);
 	}
 
-	Write_AIR_N_Control = HAL_GPIO_ReadPin(AIR_N_CONTROL_uC_GPIO_Port, AIR_N_CONTROL_uC_Pin); //AIR_N turned on/off
+	Write_AIRs_CONTROL = HAL_GPIO_ReadPin(AIRs_CONTROL_uC_GPIO_Port, AIRs_CONTROL_uC_Pin); //AIR_N turned on/off
 	AIR_N_STATUS = HAL_GPIO_ReadPin(AIR_N_STATUS_uC_GPIO_Port,
 	AIR_N_STATUS_uC_Pin); // AIR_N conducting current
 
@@ -402,7 +402,7 @@ void AIRs_Check(void)
 	AIR_P_STATUS_uC_Pin); // AIR_P conducting current
 
 	//AIR_N state check, if AIR_N is turned on but doesn't conduct current, send error
-	if (( Write_AIR_N_Control == GPIO_PIN_SET ) && ( AIR_N_STATUS == GPIO_PIN_RESET ))
+	if (( Write_AIRs_CONTROL == GPIO_PIN_SET ) && ( AIR_N_STATUS == GPIO_PIN_RESET ))
 	{
 		CAN_ReportError(Error_AIR_P_ID);
 	}
@@ -423,7 +423,7 @@ void MAIN_Status_Check(void)
 {
 	if (Write_MAIN_Status == 0) //MAIN always should be ON
 	{
-		HAL_GPIO_WritePin(AIR_N_CONTROL_uC_GPIO_Port, AIR_N_CONTROL_uC_Pin, Write_MAIN_Status);
+		HAL_GPIO_WritePin(AIRs_CONTROL_uC_GPIO_Port, AIRs_CONTROL_uC_Pin, Write_MAIN_Status);
 	}
 	else //reset main status
 	{
