@@ -57,22 +57,22 @@ void AIRs_Current_Measurment(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
-#define LED_RED_Pin GPIO_PIN_0
+#define LED_RED_Pin GPIO_PIN_3
 #define LED_RED_GPIO_Port GPIOA
-#define LED_GREEN_Pin GPIO_PIN_1
+#define LED_GREEN_Pin GPIO_PIN_4
 #define LED_GREEN_GPIO_Port GPIOA
-#define AIR_P_CURRENT_SENSOR_uC_Pin GPIO_PIN_0
-#define AIR_P_CURRENT_SENSOR_uC_GPIO_Port GPIOB
-#define AIR_N_CURRENT_SENSOR_uC_Pin GPIO_PIN_1
+#define IMD_M_HS_uC_Pin GPIO_PIN_5
+#define IMD_M_HS_uC_GPIO_Port GPIOA
+#define AIR_N_CURRENT_SENSOR_uC_Pin GPIO_PIN_0
 #define AIR_N_CURRENT_SENSOR_uC_GPIO_Port GPIOB
-#define AIRs_CONTROL_uC_Pin GPIO_PIN_2
-#define AIRs_CONTROL_uC_GPIO_Port GPIOB
-#define AIR_P_STATUS_uC_Pin GPIO_PIN_10
+#define AIR_P_CURRENT_SENSOR_uC_Pin GPIO_PIN_1
+#define AIR_P_CURRENT_SENSOR_uC_GPIO_Port GPIOB
+#define AIR_P_STATUS_uC_Pin GPIO_PIN_2
 #define AIR_P_STATUS_uC_GPIO_Port GPIOB
+#define AIRs_CONTROL_uC_Pin GPIO_PIN_10
+#define AIRs_CONTROL_uC_GPIO_Port GPIOB
 #define AIR_N_STATUS_uC_Pin GPIO_PIN_11
 #define AIR_N_STATUS_uC_GPIO_Port GPIOB
-#define IMD_M_HS_uC_Pin GPIO_PIN_8
-#define IMD_M_HS_uC_GPIO_Port GPIOA
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

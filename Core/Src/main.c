@@ -135,13 +135,13 @@ int main(void)
   MX_GPIO_Init();
   MX_CAN_Init();
   MX_ADC_Init();
-  MX_TIM1_Init();
   MX_USART1_UART_Init();
+  MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
 
 	/*PWM input capture */
-	HAL_TIM_IC_Start_IT(&htim1, TIM_CHANNEL_1); //main channel
-	HAL_TIM_IC_Start(&htim1, TIM_CHANNEL_2); //indirect channel
+	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1); //main channel
+	HAL_TIM_IC_Start(&htim2, TIM_CHANNEL_2); //indirect channel
 	/*PWM input capture */
 
 	Timer_MAIN = HAL_GetTick();
@@ -350,7 +350,7 @@ void AIRs_Current_Measurment(void)
 
 	if (HAL_ADC_PollForConversion(&hadc, 1000) == HAL_OK)
 	{
-		AIR_P_Current = HAL_ADC_GetValue(&hadc); // Read AIR_P current value
+		AIR_N_Current = HAL_ADC_GetValue(&hadc); // Read AIR_P current value
 	}
 
 	Set_ADC_Channel(ADC_CHANNEL_9); //Switch to channel 9
@@ -358,7 +358,7 @@ void AIRs_Current_Measurment(void)
 
 	if (HAL_ADC_PollForConversion(&hadc, 1000) == HAL_OK)
 	{
-		AIR_N_Current = HAL_ADC_GetValue(&hadc); // Read AIR_N current value
+		AIR_P_Current = HAL_ADC_GetValue(&hadc); // Read AIR_N current value
 	}
 
 	//Current calc V(I) = 0.0034 *I + 2.5 -> I = (V(I) - 2.5) / 0.0034, equation from datasheet
