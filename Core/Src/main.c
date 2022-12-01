@@ -81,6 +81,7 @@ _Bool Write_AIRs_CONTROL;
 _Bool AIR_N_STATUS, AIR_P_STATUS;
 
 uint32_t Timer_MAIN;
+
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -407,7 +408,7 @@ void AIRs_Check(void)
 		CAN_ReportError(Error_AIR_P_ID);
 	}
 	//Both airs should conduct current at the same time
-	if(( AIR_N_STATUS == GPIO_PIN_SET ) && ( AIR_P_STATUS == GPIO_PIN_RESET ))
+	if( AIR_N_STATUS != AIR_P_STATUS )
 	{
 		CAN_ReportError(Error_AIR_N_ID);
 	}

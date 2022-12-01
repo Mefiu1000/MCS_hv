@@ -68,7 +68,7 @@ RxID: **0x001F**
 |------|-------|-------|-------|
 |      |DLC    |ERROR  |Code   |
 
-4) AIR_P status Error:
+4) AIR_N status Error:
 
 |TxID  |2      |0x1D   |0x04   |
 |------|-------|-------|-------|
