@@ -49,10 +49,10 @@
 #define READ 0x3D
 #define ERROR_D 0x001D
 
-#define MAX_CURRENT_DIVERGENCE 0.5 	// random value, change later
-#define MAX_CURRENT 5 				// random value, change later
+#define MAX_CURRENT_DIVERGENCE 0.5 	//ToDo random value, change later
+#define MAX_CURRENT 5 				//ToDo random value, change later
 
-#define MAIN_TIMEOUT 5000   		// random value, change later
+#define MAIN_TIMEOUT 5000   		//ToDo random value, change later
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -75,9 +75,9 @@ uint8_t Read_Ins_resistance[2];
 uint16_t AIR_P_Current, AIR_N_Current;
 uint8_t Read_AIR_AVG[2];
 
-_Bool Write_MAIN_Status = 0; //init value 0 or 1????
+_Bool Write_MAIN_Status = 0; //ToDo init value 0 or 1????
 
-_Bool Write_AIRs_CONTROL;
+_Bool Write_AIRs_Control;
 _Bool AIR_N_STATUS, AIR_P_STATUS;
 
 uint32_t Timer_MAIN;
@@ -139,6 +139,7 @@ int main(void)
   MX_USART1_UART_Init();
   MX_TIM2_Init();
   /* USER CODE BEGIN 2 */
+  CAN_Init();
 
 	/*PWM input capture */
 	HAL_TIM_IC_Start_IT(&htim2, TIM_CHANNEL_1); //main channel
@@ -177,10 +178,9 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI|RCC_OSCILLATORTYPE_HSI14;
-  RCC_OscInitStruct.HSIState = RCC_HSI_ON;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSI14|RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSI14State = RCC_HSI14_ON;
-  RCC_OscInitStruct.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
   RCC_OscInitStruct.HSI14CalibrationValue = 16;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_NONE;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
@@ -192,7 +192,7 @@ void SystemClock_Config(void)
   */
   RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK
                               |RCC_CLOCKTYPE_PCLK1;
-  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSI;
+  RCC_ClkInitStruct.SYSCLKSource = RCC_SYSCLKSOURCE_HSE;
   RCC_ClkInitStruct.AHBCLKDivider = RCC_SYSCLK_DIV1;
   RCC_ClkInitStruct.APB1CLKDivider = RCC_HCLK_DIV1;
 
@@ -395,7 +395,7 @@ void AIRs_Check(void)
 		CAN_ReportError(Error_AIRs_Current_Divergence_ID);
 	}
 
-	Write_AIRs_CONTROL = HAL_GPIO_ReadPin(AIRs_CONTROL_uC_GPIO_Port, AIRs_CONTROL_uC_Pin); //AIR_N turned on/off
+	Write_AIRs_Control = HAL_GPIO_ReadPin(AIRs_CONTROL_uC_GPIO_Port, AIRs_CONTROL_uC_Pin); //AIR_N turned on/off
 	AIR_N_STATUS = HAL_GPIO_ReadPin(AIR_N_STATUS_uC_GPIO_Port,
 	AIR_N_STATUS_uC_Pin); // AIR_N conducting current
 
@@ -403,7 +403,7 @@ void AIRs_Check(void)
 	AIR_P_STATUS_uC_Pin); // AIR_P conducting current
 
 	//AIR_N state check, if AIR_N is turned on but doesn't conduct current, send error
-	if (( Write_AIRs_CONTROL == GPIO_PIN_SET ) && ( AIR_N_STATUS == GPIO_PIN_RESET ))
+	if (( Write_AIRs_Control == GPIO_PIN_SET ) && ( AIR_N_STATUS == GPIO_PIN_RESET ))
 	{
 		CAN_ReportError(Error_AIR_P_ID);
 	}

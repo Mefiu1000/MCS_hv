@@ -10,8 +10,6 @@
 
 #include "main.h"
 #include "can_config.h"
-#include "stm32f0xx_hal.h"
-#include "stm32f0xx_hal_can.h"
 #include "stdbool.h"
 
 

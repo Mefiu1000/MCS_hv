@@ -1,0 +1,15 @@
+main.c:113:5:main	2
+main.c:172:6:SystemClock_Config	4
+main.c:222:6:HAL_TIM_IC_CaptureCallback	26
+main.c:274:6:IMD_ShortCircuitTo24VError_Handler	1
+main.c:284:6:IMD_InsulationMeasurementError_Handler	1
+main.c:294:6:IMD_UnderVoltageError_Handler	1
+main.c:304:6:IMD_SpeedStartError_Handler	1
+main.c:314:6:IMD_DeviceError_Handler	1
+main.c:324:6:IMD_ConFaultEarthError_Handler	1
+main.c:335:6:IMD_MalfunctionError_Handler	1
+main.c:346:6:AIRs_Current_Measurment	5
+main.c:381:6:AIRs_Check	7
+main.c:423:6:MAIN_Status_Check	2
+main.c:442:6:Set_ADC_Channel	2
+main.c:459:6:Error_Handler	1

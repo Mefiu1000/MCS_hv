@@ -60,8 +60,8 @@ all: main-build
 main-build: MCS_hv.elf secondary-outputs
 
 # Tool invocations
-MCS_hv.elf MCS_hv.map: $(OBJS) $(USER_OBJS) C:\Users\sebastian.sosnowski\STM32CubeIDE\workspace_1.10.1\MCS_hv\STM32F042C6TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "MCS_hv.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0 -T"C:\Users\sebastian.sosnowski\STM32CubeIDE\workspace_1.10.1\MCS_hv\STM32F042C6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MCS_hv.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+MCS_hv.elf MCS_hv.map: $(OBJS) $(USER_OBJS) C:\Users\sebastian.sosnowski\STM32CubeIDE\workspace_1.12.0\MCS_hv\STM32F042C6TX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "MCS_hv.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0 -T"C:\Users\sebastian.sosnowski\STM32CubeIDE\workspace_1.12.0\MCS_hv\STM32F042C6TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="MCS_hv.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

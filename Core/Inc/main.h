@@ -73,6 +73,7 @@ void AIRs_Current_Measurment(void);
 #define AIRs_CONTROL_uC_GPIO_Port GPIOB
 #define AIR_N_STATUS_uC_Pin GPIO_PIN_11
 #define AIR_N_STATUS_uC_GPIO_Port GPIOB
+
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */
