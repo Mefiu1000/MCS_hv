@@ -39,13 +39,13 @@ RxID: **0x001F**
 # Respond
 1) AIRs average current value:
 
-|TxID  |3      |0x02   |0xNN      |0xNN       |Range |Units    |
+|TxID  |3      |0x01   |0xNN      |0xNN       |Range |Units    |
 |------|-------|-------|----------|-----------|------|---------|
 |      |DLC    |RegID  |data[0-7] |data[8-15] |16bit |0-65536  |
 
 2) Insulation resistance value:
 
-|TxID  |3      |0x02   |0xNN      |0xNN       |Range |Units    |
+|TxID  |3      |0x03   |0xNN      |0xNN       |Range |Units    |
 |------|-------|-------|----------|-----------|------|---------|
 |      |DLC    |RegID  |data[0-7] |data[8-15] |16bit |0-65536  |
 
