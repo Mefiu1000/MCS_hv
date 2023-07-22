@@ -53,7 +53,7 @@ extern "C" {
 void Error_Handler(void);
 
 /* USER CODE BEGIN EFP */
-void AIRs_Current_Measurment(void);
+void AIRs_CurrentMeasurment(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/

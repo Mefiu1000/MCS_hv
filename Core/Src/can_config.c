@@ -24,7 +24,7 @@ uint32_t			 TxMailbox;
 /* Externs used in configs */
 
 extern _Bool Write_AIRs_Control;
-extern _Bool Write_MAIN_Status;
+extern _Bool Write_MAIN_Handshake;
 
 extern uint8_t Read_Ins_resistance[2];
 extern uint8_t Read_AIR_AVG[2];
@@ -50,14 +50,14 @@ ResponseMessageFrame ResponseMessage[NUMBER_OF_READ_REGS] =
 {
 		{ //AIRs current value:
 			.Response_DLC         = 3u,                         // Data length of response message
-			.Read_ReactionHandler = ReadAIRsAmperageHandler,       // Handler of reaction to read request from MCU
+			.Read_ReactionHandler = Read_AIRsAmperage_Handler,       // Handler of reaction to read request from MCU
 			.Response_RegID       = Read_AIRs_Value_ID, // Address of regs which response refers
 			.Response_Data1       = &Read_AIR_AVG[0],                 // AIR_P current value AVG LSB
 			.Response_Data2       = &Read_AIR_AVG[1]                 // AIR_N current value AVG MSB
 		},
 		{//Insulation resistance value:
 			.Response_DLC         = 3u,
-			.Read_ReactionHandler = ReadInsulationResistanceValueHandler,
+			.Read_ReactionHandler = Read_InsulationResistanceValue_Handler,
 			.Response_RegID       = Read_Ins_R_Value_ID,
 			.Response_Data1       = &Read_Ins_resistance[0],                // Insulation resistance LSB
 			.Response_Data2       = &Read_Ins_resistance[1]                // Insulation resistance MSB
@@ -75,13 +75,12 @@ WriteMessageFrame WriteMessage[NUMBER_OF_WRITE_REGS] =
 {
 		{
 			.Write_RegID           = Write_Tractive_System_State_ID, 	   // Reg which should be written by MCU command
-			.Write_ReactionHandler = WriteTractiveSystemStateHandler,        // Handler of reaction to write request from MCU
+			.Write_ReactionHandler = Write_TractiveSystemState_Handler,        // Handler of reaction to write request from MCU
 			.Write_State1          = &Write_AIRs_Control               // If this MCU command should change state of sth this pointer should point to variable which regards this state eg. if MCU want to light up brake light, this structure element should point to variable which contain the state of brake lights
 		},
 		{
-			.Write_RegID           = Write_MAIN_State_ID, 					// Reg which should be written by MCU command
-			.Write_ReactionHandler = WriteMainStatusHandler,       // Handler of reaction to write request from MCU
-			.Write_State1          = &Write_MAIN_Status            // If this MCU command should change state of sth this pointer should point to variable which regards this state eg. if MCU want to light up brake light, this structure element should point to variable which contain the state of brake lights
+			.Write_RegID           = Write_MAIN_Handshake_ID, 					// Reg which should be written by MCU command
+			.Write_ReactionHandler = Write_MainHandshake_Handler       // Handler of reaction to write request from MCU
 		}
 };
 
@@ -286,14 +285,14 @@ void CANBUS_Error_Handler(void)
 	*/
 }
 
-/** ReadAIRsAmperageHandler
+/** Read_AIRsAmperage_Handler
  * @brief Handler which reads and sends actual average value of AIRs amperage
  *
  * @retval None
  **/
-void ReadAIRsAmperageHandler(void)
+void Read_AIRsAmperage_Handler(void)
 {
-	AIRs_Current_Measurment();
+	AIRs_CurrentMeasurment();
 
 	TxData[ResponseRegID] = ResponseMessage[0].Response_RegID;             		  		// Response ID
 	TxData[ResponseData1] = *( ResponseMessage[0].Response_Data1 );                		// AIR_P current value AVG LSB
@@ -301,12 +300,12 @@ void ReadAIRsAmperageHandler(void)
 	CAN_Transmit(&TxHeader, ResponseMessage[0].Response_DLC, TxData, &TxMailbox); 		// Transmit Data
 }
 
-/** ReadInsulationResistanceValueHandler
+/** Read_InsulationResistanceValue_Handler
  * @brief Handler which reads and sends actual frame insulation resistance value
  *
  * @retval None
  **/
-void ReadInsulationResistanceValueHandler(void)
+void Read_InsulationResistanceValue_Handler(void)
 {
 	TxData[ResponseRegID] = ResponseMessage[1].Response_RegID;             		  		// Response ID
 	TxData[ResponseData1] = *( ResponseMessage[1].Response_Data1 );                    	// Insulation resistance LSB
@@ -314,23 +313,23 @@ void ReadInsulationResistanceValueHandler(void)
 	CAN_Transmit(&TxHeader, ResponseMessage[1].Response_DLC, TxData, &TxMailbox); 		// Transmit Data
 }
 
-/** WriteTractiveSystemStateHandler
+/** Write_TractiveSystemState_Handler
  * @brief Handler which turns ON/OFF tractive system
  *
  * @retval None
  **/
-void WriteTractiveSystemStateHandler(void)
+void Write_TractiveSystemState_Handler(void)
 {
 	*( WriteMessage[0].Write_State1 ) = RxData[WriteData1];
 	HAL_GPIO_WritePin(AIRs_CONTROL_uC_GPIO_Port, AIRs_CONTROL_uC_Pin, *( WriteMessage[0].Write_State1 ));
 }
 
-/** WriteMainStatusHandler
+/** Write_MainHandshake_Handler
  * @brief Handler which update MAIN status to monitor whether its alive or not
  *
  * @retval None
  **/
-void WriteMainStatusHandler(void)
+void Write_MainHandshake_Handler(void)
 {
-	*( WriteMessage[1].Write_State1 ) = RxData[WriteData1];
+	Write_MAIN_Handshake = true;
 }

@@ -43,7 +43,7 @@ typedef enum
 typedef enum
 {
 	Write_Tractive_System_State_ID = 0x02u, //AIRs and Pre-charge state
-	Write_MAIN_State_ID = 0x04u
+	Write_MAIN_Handshake_ID = 0xFFu
 } WriteRegsID;
 
 typedef enum
@@ -156,10 +156,10 @@ void CAN_ProcessWriteCommand(void);
 void CAN_AcknowledgeWriteMessage(WriteRegsID WriteReqID);
 void CAN_ReportError(ErrorRegsID ErrorID);
 void CANBUS_Error_Handler(void);
-void ReadAIRsAmperageHandler(void);
-void ReadInsulationResistanceValueHandler(void);
-void WriteTractiveSystemStateHandler(void);
-void WriteMainStatusHandler(void);
+void Read_AIRsAmperage_Handler(void);
+void Read_InsulationResistanceValue_Handler(void);
+void Write_TractiveSystemState_Handler(void);
+void Write_MainHandshake_Handler(void);
 
 /* ---------------------------------------------------------------------------------------- */
 /* ---------------------------END OF FUNCTIONS DECLARATIONS-------------------------------- */

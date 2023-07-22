@@ -75,7 +75,7 @@ uint8_t Read_Ins_resistance[2];
 uint16_t AIR_P_Current, AIR_N_Current;
 uint8_t Read_AIR_AVG[2];
 
-_Bool Write_MAIN_Status = 0; //ToDo init value 0 or 1????
+_Bool Write_MAIN_Handshake = false; //ToDo init value false or true????
 
 _Bool Write_AIRs_Control;
 _Bool AIR_N_STATUS, AIR_P_STATUS;
@@ -95,9 +95,9 @@ void IMD_SpeedStartError_Handler(void);
 void IMD_DeviceError_Handler(void);
 void IMD_ConFaultEarthError_Handler(void);
 void IMD_MalfunctionError_Handler(void);
-void AIRs_Current_Measurment(void);
-void MAIN_Status_Check(void);
-void Set_ADC_Channel(uint32_t Channel);
+void AIRs_CurrentMeasurment(void);
+void MAIN_StatusCheck(void);
+void ADC_SetChannel(uint32_t Channel);
 
 /* USER CODE END PFP */
 
@@ -155,7 +155,7 @@ int main(void)
 	{
 		if (( HAL_GetTick() - Timer_MAIN ) > MAIN_TIMEOUT)
 		{
-			MAIN_Status_Check();
+			MAIN_StatusCheck();
 		}
 		AIRs_Check();
     /* USER CODE END WHILE */
@@ -337,16 +337,16 @@ void IMD_MalfunctionError_Handler(void)
 	CAN_ReportError(Error_IMD_Malfunction_ID);
 }
 
-/** AIRs_Current_Measurment
+/** AIRs_CurrentMeasurment
  * @brief Function which measures AIRs actual amperage
  * and calculate their average value
  *
  * @retval None.
  **/
-void AIRs_Current_Measurment(void)
+void AIRs_CurrentMeasurment(void)
 {
 	/* AIRs current measurement and check BEGIN */
-	Set_ADC_Channel(ADC_CHANNEL_8); //Switch to channel 8
+	ADC_SetChannel(ADC_CHANNEL_8); //Switch to channel 8
 	HAL_ADC_Start(&hadc); //start conversion
 
 	if (HAL_ADC_PollForConversion(&hadc, 1000) == HAL_OK)
@@ -354,7 +354,7 @@ void AIRs_Current_Measurment(void)
 		AIR_N_Current = HAL_ADC_GetValue(&hadc); // Read AIR_P current value
 	}
 
-	Set_ADC_Channel(ADC_CHANNEL_9); //Switch to channel 9
+	ADC_SetChannel(ADC_CHANNEL_9); //Switch to channel 9
 	HAL_ADC_Start(&hadc); //start conversion
 
 	if (HAL_ADC_PollForConversion(&hadc, 1000) == HAL_OK)
@@ -380,7 +380,7 @@ void AIRs_Current_Measurment(void)
  **/
 void AIRs_Check(void)
 {
-	AIRs_Current_Measurment();
+	AIRs_CurrentMeasurment();
 
 	if (AIR_P_Current > MAX_CURRENT)
 	{
@@ -414,32 +414,32 @@ void AIRs_Check(void)
 	}
 }
 
-/** MAIN_Status_Check
+/** MAIN_StatusCheck
  * @brief Function which checks MAIN status
  * and turns OFF Tractive System if MAIN is not ON
  *
  * @retval None.
  **/
-void MAIN_Status_Check(void)
+void MAIN_StatusCheck(void)
 {
-	if (Write_MAIN_Status == 0) //MAIN always should be ON
+	if (Write_MAIN_Handshake == false) //MAIN always should be ON
 	{
-		HAL_GPIO_WritePin(AIRs_CONTROL_uC_GPIO_Port, AIRs_CONTROL_uC_Pin, Write_MAIN_Status);
+		HAL_GPIO_WritePin(AIRs_CONTROL_uC_GPIO_Port, AIRs_CONTROL_uC_Pin, Write_MAIN_Handshake);
 	}
 	else //reset main status
 	{
-		Write_MAIN_Status = 0;
+		Write_MAIN_Handshake = false;
 	}
 }
 
-/** Set_ADC_Channel
+/** ADC_SetChannel
  * @brief Function which switches used ADC channel
  *
  * @param Channel Number of channel which we want to use
  *
  * @retval None.
  **/
-void Set_ADC_Channel(uint32_t Channel)
+void ADC_SetChannel(uint32_t Channel)
 {
 	ADC_ChannelConfTypeDef sConfig = { 0 };
 	sConfig.Channel = Channel;

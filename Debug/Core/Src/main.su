@@ -8,8 +8,8 @@
 ../Core/Src/main.c:314:6:IMD_DeviceError_Handler	8	static
 ../Core/Src/main.c:324:6:IMD_ConFaultEarthError_Handler	8	static
 ../Core/Src/main.c:335:6:IMD_MalfunctionError_Handler	8	static
-../Core/Src/main.c:346:6:AIRs_Current_Measurment	8	static
+../Core/Src/main.c:346:6:AIRs_CurrentMeasurment	8	static
 ../Core/Src/main.c:381:6:AIRs_Check	8	static
-../Core/Src/main.c:423:6:MAIN_Status_Check	8	static
-../Core/Src/main.c:442:6:Set_ADC_Channel	40	static
+../Core/Src/main.c:423:6:MAIN_StatusCheck	8	static
+../Core/Src/main.c:442:6:ADC_SetChannel	40	static
 ../Core/Src/main.c:459:6:Error_Handler	8	static,ignoring_inline_asm

@@ -29,12 +29,11 @@ RxID: **0x001F**
 |------|-------|-------|-------|
 |      |DLC    |READ   |RegID  |
 
-4) MAIN status monitor:
+4) Handshake with MCS_Main:
 
-|RxID                           |3      |       |0x04   |0xNN       |Range |Units|
-|-------------------------------|-------|-------|-------|-----------|------|-----|
-|                               |DLC    |WRITE  |RegID  |data[0-7]  |8bit  |0-1  |
-|MAIN status value:(1-0N, 0-OFF)|       |       |       |           |      |     |
+|RxID  |2      |       |0xFF   |
+|------|-------|-------|-------|
+|      |DLC    |WRITE  |RegID  |
 
 # Respond
 1) AIRs average current value:

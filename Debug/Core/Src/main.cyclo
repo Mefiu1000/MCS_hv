@@ -8,8 +8,8 @@ main.c:304:6:IMD_SpeedStartError_Handler	1
 main.c:314:6:IMD_DeviceError_Handler	1
 main.c:324:6:IMD_ConFaultEarthError_Handler	1
 main.c:335:6:IMD_MalfunctionError_Handler	1
-main.c:346:6:AIRs_Current_Measurment	5
+main.c:346:6:AIRs_CurrentMeasurment	5
 main.c:381:6:AIRs_Check	7
-main.c:423:6:MAIN_Status_Check	2
-main.c:442:6:Set_ADC_Channel	2
+main.c:423:6:MAIN_StatusCheck	2
+main.c:442:6:ADC_SetChannel	2
 main.c:459:6:Error_Handler	1
